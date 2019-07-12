@@ -148,7 +148,7 @@ for title, ads_link in zip(all[0], all[1]):
     print('Episode:\n\tTitle: ' + title)
     print('\tAds-Link: ' + ads_link)
     try:
-        series_direct_links.write(extract_direct_link(ads_link))
+        series_direct_links.write(extract_direct_link(ads_link) + '\n')
         print('\ttxt file: direct link saved. ✅ ✅ ✅'.title())
         i += 1
     except Exception as error:
@@ -175,3 +175,4 @@ print('\t\t✅ ✅ ✅ \tDirect Links Saved Successfully To The Text File ✅ �
 
 print('\t\topenning Download folder...'.title())
 webbrowser.open(os.curdir)
+sys.exit()
