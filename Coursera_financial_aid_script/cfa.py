@@ -1,3 +1,13 @@
+"""
+Description:
+
+    This Script Takes a sepcialization link as
+    a terminal argument or user input if the user 
+    forgot and then loops throw all the courses in
+    the sepcialization and apply for financial aid
+    for every course.
+"""
+
 import pyautogui
 import requests
 from selenium import webdriver
@@ -13,7 +23,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 BASE_LINK = 'https://www.coursera.org'
-TEST_LINK = 'https://www.coursera.org/specializations/applied-data-science'
 pyautogui.PAUSE = 1
 
 # ** This is SO IMPORTANT Because it enables you to
@@ -35,7 +44,7 @@ browser = webdriver.Chrome(
 
 
 def prepare_links():
-    link = TEST_LINK
+    link = ''
 
     # Getting the link as a terminal argument
     # or as user input
@@ -65,7 +74,7 @@ def get_spec_courses(soup, spec_title):
     all = soup.find_all('a', attrs={'data-e2e': "course-link"})
     # A list of two lists:
     # the the list at index [0] contains courses names
-    # the the list at index [1] contains courses linkss
+    # the the list at index [1] contains courses links
     names_links = [[], []]
     # file = open('%s.txt' % spec_title, 'w')
     for course in all:
