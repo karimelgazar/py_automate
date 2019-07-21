@@ -102,12 +102,15 @@ def fill_first_page(link):
 # ** of the original chrome browser so I repalced it with the
 # ** .execute_script() method with every element that needs to clicked
 
-    # Pressing on the financial aid button
-    button = WebDriverWait(browser, 10).until(
-        EC.element_to_be_clickable((By.ID, 'finaid_button')))  # .click()
-    browser.execute_script("arguments[0].click();", button)
+    # Check if you are ar=lredy enrrolled or not
+    try:
+        # Pressing on the financial aid button
+        button = WebDriverWait(browser, 10).until(
+            EC.element_to_be_clickable((By.ID, 'finaid_button')))
+        browser.execute_script("arguments[0].click();", button)
+    except sel_exceptions.TimeoutException:
+        return "already enrolled".title()
 
-    # time.sleep(5)
     # Pressing the Button | Continue to the forum |
     apply = browser.find_element_by_id(
         'financial_aid_modal_apply_button')
@@ -159,15 +162,18 @@ def fill_final_page():
         'finaid-goal').send_keys(ans[1])
 
     # Answer to Question >> Help Us Improve  : NO
-    last_field = browser.find_element_by_id(
-        'finaid-loanReason')
-    last_field.send_keys(ans[2])
+    browser.find_element_by_id(
+        'finaid-loanReason').send_keys(ans[2])
 
-    last_field.submit()
+    submit_but = browser.find_element_by_id(
+        'submit_application_button')
+    browser.execute_script("arguments[0].click();", submit_but)
 
 
 def fill_the_form_for(link):
-    fill_first_page(link)
+    fp = fill_first_page(link)
+    if fp != None:
+        return fp
     fill_final_page()
 
 
@@ -176,11 +182,14 @@ start = time.time()
 titles_links = prepare_links()
 i = 0
 for title, link in zip(titles_links[0], titles_links[1]):
-    print('Working On...\n\t\tThe Course: %s\n\t\tLink: %s' % (title, link))
+    print('\nWorking On...\n\t\tThe Course: %s\n\t\tLink: %s' % (title, link))
 
     try:
-        fill_the_form_for(link)
-        print("\t\tApplying For This Course Is: DONE ✅ ✅ ✅")
+        status = fill_the_form_for(link)
+        if status == None:
+            print("\t\tApplying For This Course Is: DONE ✅ ✅ ✅")
+        else:
+            print('\t\tStatus: %s.' % status)
         print('#' * 50, '\n')
         i += 1
     except sel_exceptions.NoSuchWindowException:
@@ -192,13 +201,13 @@ for title, link in zip(titles_links[0], titles_links[1]):
             '\n\nReopenning The Browser...\n\n' +
             'Moving To The Next Course...\n\n')
 
-    # except Exception as err:
-    #     print('%' * 50)
-    #     print('\nSomeThing Went Wrong! ❌ ❌ ❌\n')
-    #     print('With Course:\n\t%s\n\t%s' % (title, link))
-    #     print('\nSo I Skipped It And Moved To The Next Course\n\n')
-    #     print('The error message:\n%s' % err)
-    #     continue
+    except Exception as err:
+        print('%' * 50)
+        print('\nSomeThing Went Wrong! ❌ ❌ ❌\n')
+        print('With Course:\n\t%s\n\t%s' % (title, link))
+        print('\nSo I Skipped It And Moved To The Next Course\n\n')
+        print('The error message:\n%s' % err)
+        continue
 
 
 print(
