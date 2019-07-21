@@ -1,45 +1,43 @@
 """
 Description:
 
-    This Script Takes a Series link from Akoam Website
-    as a terminal argument or user input if the user 
-    forgot and then creates a folder with the series name
-    and also downloads the cover image loops throw all 
-    the series episodes in the link and extract the 
-    direct link for every episode then saves every 
+    This Script Takes a movie or Series link at Akoam Website
+    from clipboard or as a terminal argument or user
+    input if the user forgot and then creates a folder
+    with the series name and also downloads the cover image
+    then loops throw all the series episodes in the link
+    and extract the direct link for every episode then saves every 
     new direct link to a file .txt so that you can
     download the whole series at onc by using IDM.
 """
 
 
-import pyautogui
-import requests
-import sys
-import os
-import time
-import threading
-from bs4 import BeautifulSoup
-import re
-import webbrowser
-import selenium.common.exceptions as sel_exceptions
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium import webdriver
+import selenium.common.exceptions as sel_exceptions
+import webbrowser
+import re
+from bs4 import BeautifulSoup
+import threading
+import time
+import os
+import sys
+import requests
+import pyperclip
 
 LINE_SEP = '#' * 50
 BASE_PATH = "E:\Series"
 BASE_LINK = 'https://my.akoam.net'
-TEST_LINK = 'https://my.akoam.net/162829/%D9%85%D8%B3%D9%84%D8%B3%D9%84-Dororo-%D8%A7%D9%84%D9%85%D9%88%D8%B3%D9%85-%D8%A7%D9%84%D8%A7%D9%88%D9%84-%D9%85%D8%AA%D8%B1%D8%AC%D9%85'
-pyautogui.PAUSE = 1
+# TEST_LINK = 'https://my.akoam.net/162829/%D9%85%D8%B3%D9%84%D8%B3%D9%84-Dororo-%D8%A7%D9%84%D9%85%D9%88%D8%B3%D9%85-%D8%A7%D9%84%D8%A7%D9%88%D9%84-%D9%85%D8%AA%D8%B1%D8%AC%D9%85'
 
 options = webdriver.ChromeOptions()
 # ? This will reduse the amount of lines that
 # ? Selenium prints to the terminal
 options.add_argument('--log-level=3')
 
-browser = webdriver.Chrome(
-    executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
+browser = None
 
 
 def download_cover_img(link):
@@ -80,21 +78,27 @@ def make_download_folder(soup):
 
 
 def prepare_links():
+    global browser, options
+
     # A list of two lists:
     # the the list at index [0] contains episodes names
     # the the list at index [1] contains episodes ads-links
     titles_ads_link = [[], []]
-    link = TEST_LINK
+
+    link = pyperclip.paste()
     folder_title = ''
+
     if len(sys.argv) > 1:
         link = sys.argv[1]
         # folder_title = sys.argv[2]
 
     # Getting the link as a terminal arguments
-    while link == '':  # or folder_title == '':
-        if not link:
+    while BASE_LINK not in link:
+        if len(sys.argv) < 2:
             link = input(
                 'I see you forgot to enter the Series link.\nPlease, enter it:').strip()
+        else:
+            link = sys.argv[1]
 
         # if not folder_title:
         #     folder_title = input("\nPlease Enter The Series Folder Name: ")
@@ -117,6 +121,9 @@ def prepare_links():
     for i in range(0, len(all_epi_links), 2):
         titles_ads_link[0].append(all_epi_titles[i // 2].getText())
         titles_ads_link[1].append(all_epi_links[i].get('href'))
+
+    browser = webdriver.Chrome(
+        executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
 
     return titles_ads_link
 

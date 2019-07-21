@@ -1,29 +1,26 @@
 """
 Description:
 
-    This Script Takes a sepcialization link as
-    a terminal argument or user input if the user 
+    This Script Takes a sepcialization link from clipboard
+    or as a terminal argument or user input if the user 
     forgot and then loops throw all the courses in
     the sepcialization and apply for financial aid
     for every course.
 """
-
-import pyautogui
 import requests
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 import sys
+import pyperclip
 import time
 from pprint import pprint
 from bs4 import BeautifulSoup
-import pyautogui
-from selenium.webdriver.common.by import By
 import selenium.common.exceptions as sel_exceptions
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 BASE_LINK = 'https://www.coursera.org'
-pyautogui.PAUSE = 1
 
 # ** This is SO IMPORTANT Because it enables you to
 # ** be logged in coursera automatically so that they don't
@@ -39,16 +36,16 @@ options.add_argument(
 # ? Selenium prints to the terminal
 options.add_argument('--log-level=3')
 
-browser = webdriver.Chrome(
-    executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
+browser = None
 
 
 def prepare_links():
-    link = ''
+    global browser, options
+    link = pyperclip.paste()
 
     # Getting the link as a terminal argument
     # or as user input
-    while not link:
+    while BASE_LINK not in link:
         if len(sys.argv) < 2:
             link = input(
                 'I see you forgot to enter the coursera link.\nPlease, enter it:').strip()
@@ -60,17 +57,20 @@ def prepare_links():
     req.raise_for_status()
     soup = BeautifulSoup(req.text, 'html.parser')
     title = soup.select('h1')[1].getText()
-    # .select('href'))  # .getText())
 
     if 'specializations' in link:
         print('\nSpecialization Title: %s' % title)
         return get_spec_courses(soup, title)
     else:
         print('Course Title: %s\n' % title + '#'*50)
+        browser = webdriver.Chrome(
+            executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
         return [link]
 
 
 def get_spec_courses(soup, spec_title):
+    global browser, options
+
     all = soup.find_all('a', attrs={'data-e2e': "course-link"})
     # A list of two lists:
     # the the list at index [0] contains courses names
@@ -82,7 +82,13 @@ def get_spec_courses(soup, spec_title):
         course_name = course.select('h3')[0].getText()
         names_links[0].append(course_name)
         names_links[1].append(course_link)
+
     print('_' * 90, '\n')
+    google_is_open = True
+
+    browser = webdriver.Chrome(
+        executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
+
     return names_links
 
 
@@ -91,27 +97,38 @@ def fill_first_page(link):
     # Openning Link
     browser.get(link)
 
+# ** For every webelement I did not use the .click() method
+# ** beacause it strangely didn't work when I run selenium with the cockies
+# ** of the original chrome browser so I repalced it with the
+# ** .execute_script() method with every element that needs to clicked
+
     # Pressing on the financial aid button
-    WebDriverWait(browser, 10).until(
-        EC.presence_of_element_located((By.ID, "finaid_button"))).click()
+    button = WebDriverWait(browser, 10).until(
+        EC.element_to_be_clickable((By.ID, 'finaid_button')))  # .click()
+    browser.execute_script("arguments[0].click();", button)
 
-    # Watting for the pop-up box to appear
-    time.sleep(1)
-
+    # time.sleep(5)
     # Pressing the Button | Continue to the forum |
-    browser.find_element_by_id('financial_aid_modal_apply_button').click()
+    apply = browser.find_element_by_id(
+        'financial_aid_modal_apply_button')
+    browser.execute_script("arguments[0].click();", apply)
 
     # Watting until the page is loaded to check the boxes
-    WebDriverWait(browser, 10).until(
-        EC.presence_of_element_located((By.ID, "info_checkbox"))).click()
-    browser.find_element_by_id('completion_checkbox').click()
+    c1 = WebDriverWait(browser, 10).until(
+        EC.presence_of_element_located((By.ID, "info_checkbox")))
+    browser.execute_script("arguments[0].click();", c1)
+
+    c2 = browser.find_element_by_id('completion_checkbox')
+    browser.execute_script("arguments[0].click();", c2)
 
     # Inputting text to text field
     browser.find_element_by_id(
         'accept-terms-field').send_keys('I agree to the terms above')
 
     # Clicking the button to go to the final page
-    browser.find_element_by_id('continue_finaid_application_button').click()
+    but_continue = browser.find_element_by_id(
+        'continue_finaid_application_button')
+    browser.execute_script("arguments[0].click();", but_continue)
 
 
 def fill_final_page():
@@ -146,8 +163,7 @@ def fill_final_page():
         'finaid-loanReason')
     last_field.send_keys(ans[2])
 
-    # TODO Add the submit code
-    # last_field.submit()
+    last_field.submit()
 
 
 def fill_the_form_for(link):
@@ -176,13 +192,13 @@ for title, link in zip(titles_links[0], titles_links[1]):
             '\n\nReopenning The Browser...\n\n' +
             'Moving To The Next Course...\n\n')
 
-    except Exception as err:
-        print('%' * 50)
-        print('\nSomeThing Went Wrong! ❌ ❌ ❌\n')
-        print('With Course:\n\t%s\n\t%s' % (title, link))
-        print('\nSo I Skipped It And Moved To The Next Course\n\n')
-        print('The error message:\n%s' % err)
-        continue
+    # except Exception as err:
+    #     print('%' * 50)
+    #     print('\nSomeThing Went Wrong! ❌ ❌ ❌\n')
+    #     print('With Course:\n\t%s\n\t%s' % (title, link))
+    #     print('\nSo I Skipped It And Moved To The Next Course\n\n')
+    #     print('The error message:\n%s' % err)
+    #     continue
 
 
 print(
