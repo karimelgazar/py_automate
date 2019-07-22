@@ -42,7 +42,6 @@ browser = None
 def prepare_links():
     global browser, options
     link = pyperclip.paste()
-
     # Getting the link as a terminal argument
     # or as user input
     while BASE_LINK not in link:
@@ -51,20 +50,47 @@ def prepare_links():
                 'I see you forgot to enter the coursera link.\nPlease, enter it:').strip()
         else:
             link = sys.argv[1]
-
     print('\nConnecting...\n' + '#'*50)
     req = requests.get(link)
     req.raise_for_status()
     soup = BeautifulSoup(req.text, 'html.parser')
+
+    # ** Check if there is more than 4 courses
+    # ** in this specialization so we click on
+    # ** the button |Show more| to get the rest
+    # ** of the courses the pass the new html to
+    # ** Beautiful soup instance
+
     title = soup.select('h1')[1].getText()
 
     if 'specializations' in link:
         print('\nSpecialization Title: %s' % title)
+        show_more_button = soup.find(
+            'button',
+            class_='Button_1w8tm98-o_O-default_s8ym6d-o_O-md_1jvotax m-t-1 d-block m-x-auto')
+
+        if show_more_button != None:
+            # open the browser
+            browser = webdriver.Chrome(
+                executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe",
+                chrome_options=options)
+            browser.get(link)
+
+            # click the show more button
+            WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH,
+                                                                             '//*[@id="root"]/div[1]/div/div[6]/div/div/div[2]/ul/li/div[2]/button'))
+                                             ).send_keys(Keys.ENTER)
+
+            # pass the new html to soup
+            soup = BeautifulSoup(browser.page_source, 'html.parser')
+
         return get_spec_courses(soup, title)
     else:
         print('Course Title: %s\n' % title + '#'*50)
-        browser = webdriver.Chrome(
-            executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
+        if browser == None:
+            browser = webdriver.Chrome(
+                executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe",
+                chrome_options=options)
         return [link]
 
 
@@ -86,15 +112,16 @@ def get_spec_courses(soup, spec_title):
     print('_' * 90, '\n')
     google_is_open = True
 
-    browser = webdriver.Chrome(
-        executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
-
+    if browser == None:
+        browser = webdriver.Chrome(
+            executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
     return names_links
 
 
 def fill_first_page(link):
     global browser
     # Openning Link
+    # browser.get(link)
     browser.get(link)
 
 # ** For every webelement I did not use the .click() method
@@ -102,11 +129,11 @@ def fill_first_page(link):
 # ** of the original chrome browser so I repalced it with the
 # ** .execute_script() method with every element that needs to clicked
 
-    # Check if you are ar=lredy enrrolled or not
+    # Check if you are already enrolled or not
     try:
         # Pressing on the financial aid button
         button = WebDriverWait(browser, 10).until(
-            EC.element_to_be_clickable((By.ID, 'finaid_button')))
+            EC.presence_of_element_located((By.ID, 'finaid_button')))
         browser.execute_script("arguments[0].click();", button)
     except sel_exceptions.TimeoutException:
         return "already enrolled".title()
@@ -169,6 +196,13 @@ def fill_final_page():
         'submit_application_button')
     browser.execute_script("arguments[0].click();", submit_but)
 
+    # Give the final submition page to load
+    # before we move to the next coure
+    # because without this the the brower
+    # will load the submition page and
+    # skip the next course link
+    time.sleep(7)
+
 
 def fill_the_form_for(link):
     fp = fill_first_page(link)
@@ -181,8 +215,10 @@ start = time.time()
 
 titles_links = prepare_links()
 i = 0
+print('#' * 50, '\n')
+
 for title, link in zip(titles_links[0], titles_links[1]):
-    print('\nWorking On...\n\t\tThe Course: %s\n\t\tLink: %s' % (title, link))
+    print('Working On...\n\t\tThe Course: %s\n\t\tLink: %s' % (title, link))
 
     try:
         status = fill_the_form_for(link)
