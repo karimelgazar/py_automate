@@ -18,12 +18,8 @@ Description:
 """
 
 
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
 from selenium import webdriver
-import selenium.common.exceptions as sel_exceptions
 import webbrowser
 import re
 from bs4 import BeautifulSoup, NavigableString
@@ -32,7 +28,6 @@ import time
 import os
 import sys
 import requests
-import pyautogui
 import pyperclip
 
 LINE_SEP = '#' * 50
