@@ -154,11 +154,17 @@ def download_this_season(season_link, quality):
     # so you can download from it using Adm app
     txt = open(os.path.join(season_path, 'ADM.txt'), 'w')
 
-    raw_links = soup.select('.movies_small')[0]  # episodes links
-    for episode in raw_links:
-        if not isinstance(episode, NavigableString):
-            txt.write(extract_direct_link(
-                episode.get('href'), browser, quality) + '\n')
+    if 'movie' in season_link:
+        # If the link was for a movie
+        # just download this movie only
+        txt.write(extract_direct_link(
+            season_link, browser, quality) + '\n')
+    else:
+        raw_links = soup.select('.movies_small')[0]  # episodes links
+        for episode in raw_links:
+            if not isinstance(episode, NavigableString):
+                txt.write(extract_direct_link(
+                    episode.get('href'), browser, quality) + '\n')
 
     txt.close()
     browser.quit()
@@ -241,7 +247,7 @@ def check_link_and_download():
 
         return
 
-    download_this_season(link)
+    download_this_season(link, quality)
 
 
 ########################################################
