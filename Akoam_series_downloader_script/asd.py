@@ -29,7 +29,7 @@ import pyperclip
 
 LINE_SEP = '#' * 50
 BASE_PATH = "E:\Series"
-BASE_LINK = 'https://my.akoam.net'
+BASE_LINK = 'akoam.net'
 # TEST_LINK = 'https://my.akoam.net/162829/%D9%85%D8%B3%D9%84%D8%B3%D9%84-Dororo-%D8%A7%D9%84%D9%85%D9%88%D8%B3%D9%85-%D8%A7%D9%84%D8%A7%D9%88%D9%84-%D9%85%D8%AA%D8%B1%D8%AC%D9%85'
 
 options = webdriver.ChromeOptions()
@@ -147,6 +147,9 @@ def extract_direct_link(ads_link):
     return direct_link
 
 
+########################################################
+# THE SCRIPT STARTS EXCUTING FROM HERE
+########################################################
 start = time.time()
 all = prepare_links()
 series_direct_links = open('series_direct_links.txt', 'w')

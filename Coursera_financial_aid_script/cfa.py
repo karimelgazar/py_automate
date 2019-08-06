@@ -211,6 +211,10 @@ def fill_the_form_for(link):
     fill_final_page()
 
 
+########################################################
+# THE SCRIPT STARTS EXCUTING FROM HERE
+########################################################
+
 start = time.time()
 
 titles_links = prepare_links()
