@@ -129,9 +129,12 @@ def extract_direct_link(episode_link, browser, quality_num=2):
 
 
 def get_folder_title_from(link):
-    rex = re.compile(r'[\w-]+/$')
-    # the title will end with (/) so I removed it
-    folder_title = rex.findall(link)[0][:-1]
+    # removing the last backslash if exists
+    if link.endswith('/'):
+        link = link[:-1]
+
+    rex = re.compile(r'[\w-]+$')
+    folder_title = rex.findall(link)[0]
 
     req = requests.get(link)
     req.raise_for_status()
@@ -209,12 +212,14 @@ def check_link_and_download():
 
     print('\nConnecting...\n' + '#'*50)
 
-    ending = '?ref=tv-p1'
-    if ending in link:
-        # We do this becaause regex
-        # expects that the link ends with backslach(\)
-        # not with the variable ending
-        link = link.replace(ending, '')
+    # the link should not end with
+    # strange weird text like >> ?ref=tv-p1
+    # because we want to  exrtact the folder name
+    # from the link so we look for
+    # the last occurance of backslash
+    # and make the new text from
+    # the beginning until last occurence
+    link = link[:link.rfind('/')]
 
     quality = choose_video_quality()
 
