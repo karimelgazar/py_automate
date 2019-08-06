@@ -12,7 +12,7 @@ Description:
 
     After that loops throw all the season episodes in the link
     and extract the direct link for every episode then saves every
-    new direct link to a file (.txt) so that you can
+    new direct link to a file (ADM.txt) so that you can
     download the whole series at onc by using IDM Descktop Or ADM android app.
 
 """
