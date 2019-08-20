@@ -146,7 +146,9 @@ def check_link_and_download():
 start = time.time()
 check_link_and_download()
 
+
 print(
+
     '\n\t\t>---->>>>> Finished Extracting Direct Links In %s Min.<<<<----<'
     % (round((time.time() - start) / 60, 2)))
 
