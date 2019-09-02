@@ -2,8 +2,7 @@
 Description:
 
     This Script Takes a movie or Series link at Akoam Website
-    from clipboard or as a terminal argument or user
-    input if the user forgot and then creates a folder
+    as a user input if the user forgot and then creates a folder
     with the series name and also downloads the cover image
     then loops throw all the series episodes in the link
     and extract the direct link for every episode then saves every 
@@ -11,7 +10,7 @@ Description:
     download the whole series at onc by using IDM.
 """
 
-
+from tkinter import Tk, filedialog
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -28,9 +27,9 @@ import requests
 import pyperclip
 
 LINE_SEP = '#' * 50
-BASE_PATH = "E:\Series"
+BASE_PATH = ""
 BASE_LINK = 'akoam.net'
-# TEST_LINK = 'https://my.akoam.net/162829/%D9%85%D8%B3%D9%84%D8%B3%D9%84-Dororo-%D8%A7%D9%84%D9%85%D9%88%D8%B3%D9%85-%D8%A7%D9%84%D8%A7%D9%88%D9%84-%D9%85%D8%AA%D8%B1%D8%AC%D9%85'
+# TEST_LINK = 'https://we.akoam.net/162829/%D9%85%D8%B3%D9%84%D8%B3%D9%84-Dororo-%D8%A7%D9%84%D9%85%D9%88%D8%B3%D9%85-%D8%A7%D9%84%D8%A7%D9%88%D9%84-%D9%85%D8%AA%D8%B1%D8%AC%D9%85'
 
 options = webdriver.ChromeOptions()
 # ? This will reduse the amount of lines that
@@ -55,12 +54,30 @@ def download_cover_img(link):
     print(LINE_SEP)
 
 
-def make_download_folder(soup):
+def pick_download_folder():
+    """
+    This method launch a folder picker to choose
+    the root download folder 
+    """
+    where_to = ''
+    while not where_to:
+        # Pick download folder
+        print('\nplease choose where to put download folder.'.upper())
+        print(LINE_SEP)
+        Tk().withdraw()  # to hide the small tk window
+        where_to = filedialog.askdirectory()  # folder picker
 
+    return where_to
+
+
+def make_download_folder(soup):
+    global BASE_PATH
     # Getting the title from the website
     title = soup.select('.sub_title h1')[0].getText()
     rex = re.compile(r'[\w ]+')
     folder_title = rex.search(title).group()
+
+    BASE_PATH = pick_download_folder()
 
     download_path = os.path.join(BASE_PATH, folder_title)
     os.makedirs(download_path, exist_ok=True)
@@ -79,29 +96,25 @@ def make_download_folder(soup):
 
 def prepare_links():
     global browser, options
+    link = input('Please Enter the series or movie link: '.title())
 
     # A list of two lists:
     # the the list at index [0] contains episodes names
     # the the list at index [1] contains episodes ads-links
     titles_ads_link = [[], []]
 
-    link = pyperclip.paste()
     folder_title = ''
 
-    if len(sys.argv) > 1:
-        link = sys.argv[1]
-        # folder_title = sys.argv[2]
+    if link == '0':
+        sys.exit()
 
+    print(LINE_SEP)
     # Getting the link as a terminal arguments
     while BASE_LINK not in link:
-        if len(sys.argv) < 2:
-            link = input(
-                'I see you forgot to enter the Series link.\nPlease, enter it:').strip()
-        else:
-            link = sys.argv[1]
-
-        # if not folder_title:
-        #     folder_title = input("\nPlease Enter The Series Folder Name: ")
+        link = input(
+            'I see you forgot to enter the Series link.\nPlease, enter it:').strip()
+        print(LINE_SEP)
+    print()
 
     print('\nConnecting...\n' + '#'*50)
 
@@ -150,7 +163,12 @@ def extract_direct_link(ads_link):
 ########################################################
 # THE SCRIPT STARTS EXCUTING FROM HERE
 ########################################################
-start = time.time()
+print(LINE_SEP)
+print('\t\t\tHow To Use\n\t\t', '-' * 25)
+print('Enter the Series link to download'.title(),
+      'Enter 0 to exit.'.title(), sep='\n')
+print(LINE_SEP)
+
 all = prepare_links()
 series_direct_links = open('series_direct_links.txt', 'w')
 i = 0
@@ -174,15 +192,5 @@ for title, ads_link in zip(all[0], all[1]):
 browser.quit()
 series_direct_links.close()
 
-print(
-    '\n\t\t>---->>>>> Finished Extracting Direct Links For', i,
-    'Of', len(all[0]),
-    'Courses In %s Min.<<<<----<'
-    % (round((time.time() - start) / 60, 2)))
-
-print('\t\t✅ ✅ ✅ \tDirect Links Saved Successfully To The Text File ✅ ✅ ✅\n\t\tAt Path: %s' %
-      os.path.abspath(r'./series_direct_links.txt'))
-
-print('\t\topenning Download folder...'.title())
-webbrowser.open(os.curdir)
+webbrowser.open(BASE_LINK)
 sys.exit()

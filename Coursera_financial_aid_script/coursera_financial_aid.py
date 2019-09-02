@@ -1,12 +1,13 @@
 """
 Description:
 
-    This Script Takes a sepcialization link from clipboard
-    or as a terminal argument or user input if the user 
-    forgot and then loops throw all the courses in
+    This Script Takes a sepcialization link as user input
+    if the user forgot and then loops throw all the courses in
     the sepcialization and apply for financial aid
     for every course.
 """
+
+from tkinter import Tk, filedialog
 import requests
 import sys
 import pyperclip
@@ -21,6 +22,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 BASE_LINK = 'https://www.coursera.org'
+LINE_SEP = '#' * 70
+
 
 # ** This is SO IMPORTANT Because it enables you to
 # ** be logged in coursera automatically so that they don't
@@ -41,16 +44,18 @@ browser = None
 
 def prepare_links():
     global browser, options
-    link = pyperclip.paste()
+    link = input('Please Enter The Specialization or Course Link: ')
+
+    if link == '0':
+        sys.exit()
     # Getting the link as a terminal argument
     # or as user input
     while BASE_LINK not in link:
-        if len(sys.argv) < 2:
-            link = input(
-                'I see you forgot to enter the coursera link.\nPlease, enter it:').strip()
-        else:
-            link = sys.argv[1]
+        link = input(
+            'I see you forgot to enter the coursera link.\nPlease, enter it:').strip()
+
     print('\nConnecting...\n' + '#'*50)
+
     req = requests.get(link)
     req.raise_for_status()
     soup = BeautifulSoup(req.text, 'html.parser')
@@ -161,11 +166,33 @@ def fill_first_page(link):
     browser.execute_script("arguments[0].click();", but_continue)
 
 
+def pick_answers_file():
+    """
+    This method launch a folder picker to choose
+    the root download folder 
+    """
+    where_to = ''
+    while not where_to:
+        # Pick download folder
+        print('\nplease choose where to put download folder.'.upper())
+        print(LINE_SEP)
+        Tk().withdraw()  # to hide the small tk window
+        where_to = filedialog.askopenfilename()  # folder picker
+
+    return where_to
+
+
 def fill_final_page():
     global browser
 
-    # Preparing the answers
-    ans = open('coursera_answers.txt').read().split('##')
+    # pick the answers txt file
+    print('Please Select the Answers txt file'.title())
+    answers_path = pick_answers_file()
+    # make sure it's a txt file
+    while not answers_path.endwith('.txt'):
+        print('Please Select the Answers txt file'.title())
+        answers_path = pick_answers_file()
+    ans = open(answers_path).read().split('##')
 
     # Education dropbox >> Student
     browser.find_element_by_id(
@@ -214,12 +241,16 @@ def fill_the_form_for(link):
 ########################################################
 # THE SCRIPT STARTS EXCUTING FROM HERE
 ########################################################
-
-start = time.time()
+print(LINE_SEP)
+print('\t\t\tHow To Use\n\t\t', '-' * 25)
+print('Enter the Playlist link to Calculate Total Time.'.title(),
+      'Enter 0 to exit.'.title(), sep='\n')
+print(LINE_SEP)
 
 titles_links = prepare_links()
+
 i = 0
-print('#' * 50, '\n')
+print('#' * 70, '\n')
 
 for title, link in zip(titles_links[0], titles_links[1]):
     print('Working On...\n\t\tThe Course: %s\n\t\tLink: %s' % (title, link))
@@ -237,22 +268,18 @@ for title, link in zip(titles_links[0], titles_links[1]):
             executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
 
         print(
-            '\nThe Browser was Closed. ❌ ❌ ❌' +
+            '\nThe Browser was Closed.' +
             '\n\nReopenning The Browser...\n\n' +
             'Moving To The Next Course...\n\n')
 
     except Exception as err:
         print('%' * 50)
-        print('\nSomeThing Went Wrong! ❌ ❌ ❌\n')
+        print('\nSomeThing Went Wrong!\n')
         print('With Course:\n\t%s\n\t%s' % (title, link))
         print('\nSo I Skipped It And Moved To The Next Course\n\n')
         print('The error message:\n%s' % err)
         continue
 
 
-print(
-    '\n\t\t>---->>>>> Finished Applying For', i,
-    'Of', len(titles_links[0]),
-    'Courses In %s Min.<<<<----<'
-    % (round((time.time() - start) / 60, 2)))
 browser.quit()
+sys.exit()

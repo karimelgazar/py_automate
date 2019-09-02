@@ -13,7 +13,7 @@ Description:
     download the whole series at onc by using IDM Descktop Or ADM android app.
 
 """
-
+from tkinter import filedialog, Tk
 import webbrowser
 import re
 import threading
@@ -26,7 +26,7 @@ from bs4 import BeautifulSoup, NavigableString
 
 
 LINE_SEP = '#' * 70
-BASE_PATH = "E:\Series"
+BASE_PATH = ""
 BASE_LINK = 'https://podcasts.google.com'
 
 
@@ -85,14 +85,25 @@ def download_this_podcast(pocast_link):
     txt.close()
 
 
-def check_link_and_download():
-    pocast_links = []
+def pick_download_folder():
+    """
+    This method launch a folder picker to choose
+    the root download folder 
+    """
+    where_to = ''
+    while not where_to:
+        # Pick download folder
+        print('\nplease choose where to put download folder.'.upper())
+        print(LINE_SEP)
+        Tk().withdraw()  # to hide the small tk window
+        where_to = filedialog.askdirectory()  # folder picker
 
-    print(LINE_SEP)
-    print('\t\t\tHow To Use\n\t\t', '-' * 25)
-    print('Enter the Podcast link to add it to the download list'.title(),
-          'Enter 0 to begin or exit if no links were entered.'.title(), sep='\n')
-    print(LINE_SEP)
+    return where_to
+
+
+def check_link_and_download():
+    global BASE_PATH
+    pocast_links = []
 
     # Make the user enter as many pocast_links as he wants
     pocast_link = input(
@@ -116,13 +127,16 @@ def check_link_and_download():
         print('-' * 40)
 
         pocast_link = input(
-            'Download another podcast url: ').strip()
+            'Download another podcast url or enter 0 to begin: ').strip()
 
     print(LINE_SEP)
 
     if not pocast_links:  # The Download List is Empty
         print('no pocast_links to download'.title())
         sys.exit()
+
+    # download folder picker
+    BASE_PATH = pick_download_folder()
 
     print('\nConnecting...\n' + LINE_SEP)
 
@@ -143,17 +157,13 @@ def check_link_and_download():
 # THE SCRIPT STARTS EXCUTING FROM HERE
 ########################################################
 
-start = time.time()
+print(LINE_SEP)
+print('\t\t\tHow To Use\n\t\t', '-' * 25)
+print('Enter the Podcast link to add it to the download list'.title(),
+      'Enter 0 to begin or exit if no links were entered.'.title(), sep='\n')
+print(LINE_SEP)
+
 check_link_and_download()
-
-
-print(
-
-    '\n\t\t>---->>>>> Finished Extracting Direct Links In %s Min.<<<<----<'
-    % (round((time.time() - start) / 60, 2)))
-
-
-print('\t\topenning Download folder...'.title())
 webbrowser.open(BASE_PATH)
 
 sys.exit()

@@ -17,7 +17,7 @@ Description:
 
 """
 
-
+from tkinter import Tk, filedialog
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 import webbrowser
@@ -30,9 +30,9 @@ import sys
 import requests
 import pyperclip
 
-LINE_SEP = '#' * 50
-BASE_PATH = "E:\Series"
-BASE_LINK = 'https://www.egy.best'
+LINE_SEP = '#' * 70
+BASE_PATH = ""
+BASE_LINK = 'egy.best'
 
 options = webdriver.ChromeOptions()
 # ? This will reduse the amount of lines that
@@ -177,41 +177,58 @@ def choose_video_quality():
     print('Please, Enter the Number of your prefered Qaulity.')
     print(LINE_SEP)
     print('Full HD 1080p >> Enter Number 0')
-    print('HD 720p  >> Enter Number 1')
-    print('SD 480p  >> Enter Number 2')
-    print('SD 360p  >> Enter Number 3')
+    print('HD 720p       >> Enter Number 1')
+    print('SD 480p       >> Enter Number 2')
+    print('SD 360p       >> Enter Number 3')
 
+    dic = {0: 'Full HD 1080p', 1: 'HD 720p',
+           2: 'SD 480p', 3: 'SD 360p'}
     num = -1
     while num < 0 or num > 3:
         try:
-            print('Please, Choose a number from 0 to 3.')
+            print('\nPlease, Choose a number between 0 to 3: ')
             num = int(input('Your Choosen Quality Number: '))
+            print('\nOK I\'ll download it at: %s.' % dic[num])
         except:
             continue
+    print(LINE_SEP)
     return num
 
 
+def pick_download_folder():
+    """
+    This method launch a folder picker to choose
+    the root download folder 
+    """
+    where_to = ''
+    while not where_to:
+        # Pick download folder
+        print('\nplease choose where to put download folder.'.upper())
+        print(LINE_SEP)
+        Tk().withdraw()  # to hide the small tk window
+        where_to = filedialog.askdirectory()  # folder picker
+
+    return where_to
+
+
 def check_link_and_download():
+    global BASE_PATH
+    link = input('Please Enter the series link: '.title())
 
-    link = pyperclip.paste()
+    # if len(sys.argv) > 1:
+    #     link = sys.argv[1]
+    #     # folder_title = sys.argv[2]
 
-    if len(sys.argv) > 1:
-        link = sys.argv[1]
-        # folder_title = sys.argv[2]
+    if link == '0':
+        sys.exit()
 
+    print(LINE_SEP)
     # Getting the link as a terminal arguments
     while BASE_LINK not in link:
-        if len(sys.argv) < 2:
-            link = input(
-                'I see you forgot to enter the Series link.\nPlease, enter it:').strip()
-        else:
-            link = sys.argv[1]
-
-        # if not folder_title:
-        #     folder_title = input("\nPlease Enter The Series Folder Name: ")
-
-    print('\nConnecting...\n' + '#'*50)
-
+        link = input(
+            'I see you forgot to enter the Series link.\nPlease, enter it:').strip()
+        print(LINE_SEP)
+    print()
     # the link should not end with
     # strange weird text like >> ?ref=tv-p1
     # because we want to  exrtact the folder name
@@ -222,6 +239,8 @@ def check_link_and_download():
     link = link[:link.rfind('/')]
 
     quality = choose_video_quality()
+
+    print('\nConnecting...\n' + '#'*50 + '\n')
 
     if 'series' in link:
         # Making the series root Path
@@ -234,6 +253,10 @@ def check_link_and_download():
 
         # The links for the whole sereies seasons
         a_tags = soup.select('.contents.movies_small')[0]
+
+        # Pick where to put the download folder
+        BASE_PATH = pick_download_folder()
+
         downloadThreads = []
         for a in a_tags:
             if not isinstance(a, NavigableString):
@@ -258,17 +281,13 @@ def check_link_and_download():
 ########################################################
 # THE SCRIPT STARTS EXCUTING FROM HERE
 ########################################################
+print(LINE_SEP)
+print('\t\t\tHow To Use\n\t\t', '-' * 25)
+print('Enter the Series link to download'.title(),
+      'Enter 0 to exit.'.title(), sep='\n')
+print(LINE_SEP)
 
-start = time.time()
-os.chdir(BASE_PATH)
 check_link_and_download()
-
-print(
-    '\n\t\t>---->>>>> Finished Extracting Direct Links In %s Min.<<<<----<'
-    % (round((time.time() - start) / 60, 2)))
-
-
-print('\t\topenning Download folder...'.title())
 webbrowser.open(BASE_PATH)
 
 sys.exit()

@@ -9,7 +9,7 @@ Description:
 
     The file name will be the same as the youtube channel name.
 """
-
+from tkinter import filedialog, Tk
 import requests
 from bs4 import BeautifulSoup
 import sys
@@ -21,8 +21,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 
-LINE_SEP = '-' * 70 + '\n'
-BASE_PATH = "E:\karim"
+LINE_SEP = '#' * 70 + '\n'
+BASE_PATH = ''
 BASE_LINK = 'https://www.youtube.com'
 PLAYLIST_BASE_LINK = 'https://www.youtube.com/playlist?'
 
@@ -93,7 +93,7 @@ def info_of_this_playlist(playlist_link, html, txt_file=None):
         so the original link is for a single playlist  
         """
         txt_was_None = True
-        file_name = soup.select('#owner-name > a')[0].text + '.txt'
+        file_name = soup.select('#text > a')[0].text + '.txt'
         txt_file = open(file_name, 'w', encoding='UTF-8')
 
     txt_file.write('\t\t| ' + playlist_title + ' |\n\n' +
@@ -142,7 +142,24 @@ def info_of_all_playlists(link):
     webbrowser.open(file_name)
 
 
+def pick_download_folder():
+    """
+    This method launch a folder picker to choose
+    the root download folder 
+    """
+    where_to = ''
+    while not where_to:
+        # Pick download folder
+        print('\nplease choose where to put download folder.'.upper())
+        print(LINE_SEP)
+        Tk().withdraw()  # to hide the small tk window
+        where_to = filedialog.askdirectory()  # folder picker
+
+    return where_to
+
+
 def check_link():
+    global BASE_PATH
     """
     this method let the user enter a link
     then it decides weather it's a single playlist link or 
@@ -151,6 +168,9 @@ def check_link():
     and loops again if the link was invalid
     so the user can enter the correct link.
     """
+
+    BASE_PATH = pick_download_folder()
+
     link = input('Enter the playlist or playlists link: ')
     while link != '0':
         if link.startswith(PLAYLIST_BASE_LINK):
@@ -175,6 +195,11 @@ def check_link():
 ########################################################
 # THE SCRIPT STARTS EXCUTING FROM HERE
 ########################################################
+print(LINE_SEP)
+print('\t\t\tHow To Use\n\t\t', '-' * 25)
+print('Enter the Playlist link to Calculate Total Time.'.title(),
+      'Enter 0 to exit.'.title(), sep='\n')
+print(LINE_SEP)
 
-os.chdir(BASE_PATH)
 check_link()
+sys.exit()
