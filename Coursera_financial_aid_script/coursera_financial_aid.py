@@ -174,7 +174,7 @@ def pick_answers_file():
     where_to = ''
     while not where_to:
         # Pick download folder
-        print('\nplease choose where to put download folder.'.upper())
+        print('\nplease choose where the answers txt file.'.upper())
         print(LINE_SEP)
         Tk().withdraw()  # to hide the small tk window
         where_to = filedialog.askopenfilename()  # folder picker

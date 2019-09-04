@@ -1,4 +1,4 @@
-"""
+﻿"""
 Description:
 
     This Script Takes a movie or Series link at Akoam Website
@@ -136,7 +136,7 @@ def prepare_links():
         titles_ads_link[1].append(all_epi_links[i].get('href'))
 
     browser = webdriver.Chrome(
-        executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
+        executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", options=options)
 
     return titles_ads_link
 
@@ -192,5 +192,5 @@ for title, ads_link in zip(all[0], all[1]):
 browser.quit()
 series_direct_links.close()
 
-webbrowser.open(BASE_LINK)
+webbrowser.open(BASE_BATH)
 sys.exit()
