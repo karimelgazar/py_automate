@@ -104,7 +104,7 @@ coll = COLLECT(exe,
     s.close()
 
     os.chdir(output_path)
-    command = "pyinstaller --onefile -w --icon=%s %s" % (
+    command = "pyinstaller --onefile --icon=%s %s" % (
         icon_path, script_path)
     os.system(command)
     webbrowser.open(output_path)

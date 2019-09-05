@@ -172,13 +172,16 @@ def pick_answers_file():
     the root download folder 
     """
     where_to = ''
+    print('\nplease choose where the answers txt file.'.upper())
     while not where_to:
         # Pick download folder
-        print('\nplease choose where the answers txt file.'.upper())
         print(LINE_SEP)
         Tk().withdraw()  # to hide the small tk window
         where_to = filedialog.askopenfilename()  # folder picker
-
+       
+        if where_to.endswith('.txt'):
+            print('Please choose a txt file.')
+            continue
     return where_to
 
 
@@ -258,7 +261,7 @@ for title, link in zip(titles_links[0], titles_links[1]):
     try:
         status = fill_the_form_for(link)
         if status == None:
-            print("\t\tApplying For This Course Is: DONE ✅ ✅ ✅")
+            print("\t\tApplying For This Course Is: DONE")
         else:
             print('\t\tStatus: %s.' % status)
         print('#' * 50, '\n')
