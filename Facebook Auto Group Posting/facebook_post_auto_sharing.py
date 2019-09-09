@@ -1,4 +1,4 @@
-"""
+﻿"""
 This Script auto share a specific post 
 to all groups filled in a txt file
 """
@@ -15,9 +15,10 @@ import sys
 
 
 BASE_LINK = 'https://www.facebook.com/karimCodes/posts/'
+BASE_LINK2 = 'https://www.facebook.com/108780843826246/posts'
 
 post_link = input('Please Input The Post Link: ')
-while BASE_LINK not in post_link:
+while BASE_LINK not in post_link and BASE_LINK2 not in post_link:
     post_link = input('Please Input A Valid Post Link: ')
 
 
@@ -52,6 +53,9 @@ groups = open(
 shown = False
 
 for group_name in groups.readlines():
+    if not group_name:
+        continue
+
     group_name = group_name.strip()
 
     # STEP #1 Press Main Share Button
@@ -63,26 +67,19 @@ for group_name in groups.readlines():
         EC.presence_of_element_located((By.LINK_TEXT, "Share in a group"))).click()
 
     time.sleep(2)
-
     input_fields = browser.find_elements_by_tag_name('input')
 
-   # STEP #3 press the CheckBox include_original_post if exists
-    try:
-        ActionChains(browser)\
-            .move_to_element(input_fields[-1])\
-            .click(input_fields[-1])\
-            .perform()
-    except:
-        print('\n\ninclude_original_post was not found.\n'.title())
-
-    # STEP #4 Write Group Name Then Share
+    # STEP #3 Write Group Name Then Share
     ActionChains(browser)\
         .move_to_element(input_fields[-2])\
         .click(input_fields[-2])\
+        .click(input_fields[-2])\
         .perform()
 
-    input_fields[-2].send_keys(group_name)
-    time.sleep(1)
+    time.sleep(2)
+    input_fields[-2].send_keys(group_name[0])
+    time.sleep(2)
+    input_fields[-2].send_keys(group_name[1:])
 
     if not shown and group_name == 'تعلم البرمجة من الألف الى الياء':
         shown = True
@@ -98,13 +95,21 @@ for group_name in groups.readlines():
         input_fields[-2].send_keys([Keys.DOWN,
                                     Keys.ENTER])
 
-    buttons = browser.find_elements_by_tag_name('button')
+   # STEP #4 press the CheckBox include_original_post if exists
+    try:
+        ActionChains(browser)\
+            .move_to_element(input_fields[-1])\
+            .click(input_fields[-1])\
+            .perform()
+    except:
+        print('\n\ninclude_original_post was not found.\n'.title())
 
     # post_button
+    buttons = browser.find_elements_by_tag_name('button')
     buttons[-1].click()
-    print(group_name.ljust(85) + '|DONE|')
-    time.sleep(4)  # wait sometime until the next share
+    print(group_name.ljust(85) + '|DONE|' + '\n-----------------')
+    time.sleep(6)  # wait sometime until the next share
 
 
 browser.close()
-sys.exit()
+# sys.exit()
