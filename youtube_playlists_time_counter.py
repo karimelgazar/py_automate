@@ -13,7 +13,6 @@ from tkinter import filedialog, Tk
 import requests
 from bs4 import BeautifulSoup
 import sys
-import time
 import os
 import webbrowser
 from selenium import webdriver
@@ -21,7 +20,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 
-LINE_SEP = '#' * 70 + '\n'
+LINE_SEP = '-' * 70 + '\n'
 BASE_PATH = ''
 BASE_LINK = 'https://www.youtube.com'
 PLAYLIST_BASE_LINK = 'https://www.youtube.com/playlist?'
@@ -114,7 +113,7 @@ def info_of_all_playlists(link):
 
     soup = BeautifulSoup(bro.page_source, 'html.parser')
 
-    channel_title = soup.select('#channel-title')[0].text
+    channel_title = soup.select('#text')[2].text
 
     """Playlists links from the link """
     links = [BASE_LINK + playlist.get('href')
@@ -169,9 +168,9 @@ def check_link():
     so the user can enter the correct link.
     """
 
-    BASE_PATH = pick_download_folder()
-
     link = input('Enter the playlist or playlists link: ')
+    BASE_PATH = pick_download_folder()
+    os.chdir(BASE_PATH)
     while link != '0':
         if link.startswith(PLAYLIST_BASE_LINK):
             """A link for a single list"""
