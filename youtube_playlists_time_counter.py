@@ -89,7 +89,7 @@ def info_of_this_playlist(playlist_link, html, txt_file=None):
 
     if not txt_file:
         """
-        create a txt file for because the txt_file is None
+        create a txt file because the txt_file is None
         so the original link is for a single playlist  
         """
         txt_was_None = True

@@ -69,7 +69,16 @@ for group_name in groups.readlines():
     time.sleep(2)
     input_fields = browser.find_elements_by_tag_name('input')
 
-    # STEP #3 Write Group Name Then Share
+   # STEP #3 press the CheckBox include_original_post if exists
+    try:
+        ActionChains(browser)\
+            .move_to_element(input_fields[-1])\
+            .click(input_fields[-1])\
+            .perform()
+    except:
+        print('\n\ninclude_original_post was not found.\n'.title())
+
+    # STEP #4 Write Group Name Then Share
     ActionChains(browser)\
         .move_to_element(input_fields[-2])\
         .click(input_fields[-2])\
@@ -94,15 +103,6 @@ for group_name in groups.readlines():
     else:
         input_fields[-2].send_keys([Keys.DOWN,
                                     Keys.ENTER])
-
-   # STEP #4 press the CheckBox include_original_post if exists
-    try:
-        ActionChains(browser)\
-            .move_to_element(input_fields[-1])\
-            .click(input_fields[-1])\
-            .perform()
-    except:
-        print('\n\ninclude_original_post was not found.\n'.title())
 
     # post_button
     buttons = browser.find_elements_by_tag_name('button')
