@@ -21,7 +21,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 
 LINE_SEP = '-' * 70 + '\n'
-BASE_PATH = ''
 BASE_LINK = 'https://www.youtube.com'
 PLAYLIST_BASE_LINK = 'https://www.youtube.com/playlist?'
 
@@ -158,7 +157,6 @@ def pick_download_folder():
 
 
 def check_link():
-    global BASE_PATH
     """
     this method let the user enter a link
     then it decides weather it's a single playlist link or 
@@ -169,8 +167,8 @@ def check_link():
     """
 
     link = input('Enter the playlist or playlists link: ')
-    BASE_PATH = pick_download_folder()
-    os.chdir(BASE_PATH)
+    os.chdir(pick_download_folder())  # change the working directory
+
     while link != '0':
         if link.startswith(PLAYLIST_BASE_LINK):
             """A link for a single list"""
