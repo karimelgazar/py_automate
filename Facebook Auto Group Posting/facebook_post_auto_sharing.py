@@ -57,11 +57,17 @@ for group_name in groups.readlines():
         continue
 
     group_name = group_name.strip()
-
-    # STEP #1 Press Main Share Button
-    WebDriverWait(browser, 10).until(
-        EC.presence_of_element_located((By.LINK_TEXT, "Share"))).click()
-
+    
+    while (True):
+        try:
+            # STEP #1 Press Main Share Button
+            WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.LINK_TEXT, "Share"))).click()
+            break
+        except:
+            time.sleep(1)
+            continue
+    
     # STEP #2 Press share in a group button
     WebDriverWait(browser, 10).until(
         EC.presence_of_element_located((By.LINK_TEXT, "Share in a group"))).click()
@@ -85,9 +91,9 @@ for group_name in groups.readlines():
         .click(input_fields[-2])\
         .perform()
 
-    time.sleep(2)
+    
     input_fields[-2].send_keys(group_name[0])
-    time.sleep(2)
+    time.sleep(1)
     input_fields[-2].send_keys(group_name[1:])
 
     if not shown and group_name == 'تعلم البرمجة من الألف الى الياء':
@@ -108,7 +114,7 @@ for group_name in groups.readlines():
     buttons = browser.find_elements_by_tag_name('button')
     buttons[-1].click()
     print(group_name.ljust(85) + '|DONE|' + '\n-----------------')
-    time.sleep(6)  # wait sometime until the next share
+    time.sleep(4)  # wait sometime until the next share
 
 
 browser.close()
