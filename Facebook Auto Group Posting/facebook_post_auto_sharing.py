@@ -34,7 +34,7 @@ options.add_argument(
 
 # ? This will reduse the amount of lines that
 # ? Selenium prints to the terminal
-options.addArguments("--start-maximized")
+options.add_argument("--start-maximized")
 options.add_argument('--log-level=3')
 
 # open the browser
