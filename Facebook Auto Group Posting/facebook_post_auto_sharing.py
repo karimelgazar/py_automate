@@ -92,7 +92,7 @@ for group_name in groups.readlines():
         .click(input_fields[-2])\
         .perform()
 
-    if group_name == '‏تعلم البرمجة والربح من الانترنت‏':
+    if 'الانترنت' in group_name:
         group_name = 'الانترنت'
 
     input_fields[-2].send_keys(group_name[0])
