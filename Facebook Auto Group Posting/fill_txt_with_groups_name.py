@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
-
+LINE_SEP = '-' * 80
 groups_link = 'https://www.facebook.com/pg/karimCodes/groups/?ref=page_internal'
 groups_name_css_selector = 'div._3lkd > a > div'
 
@@ -41,6 +41,9 @@ groups = browser.find_elements_by_css_selector(groups_name_css_selector)
 
 txt = open("E:\karim\Py_Automate\Facebook Auto Group Posting\\" +
            'groups_names.txt', 'w', encoding='UTF-8')
+print(LINE_SEP,
+      'Working...',
+      LINE_SEP, sep='\n')
 for group in groups:
     txt.write(group.text + '\n')
 
