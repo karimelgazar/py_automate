@@ -24,10 +24,11 @@ options = webdriver.ChromeOptions()
 # ? This will load the cookies and passwords from
 # ? the orignal Chrome browser
 options.add_argument(
-    r"--user-data-dir=C:\Users\karim\AppData\Local\Google\Chrome\User Data")
+    r"--user-data-dir=E:\karim\Important\AutomationProfile")
 
 # ? This will reduse the amount of lines that
 # ? Selenium prints to the terminal
+options.add_argument("--start-maximized")
 options.add_argument('--log-level=3')
 
 # open the browser

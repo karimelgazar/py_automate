@@ -30,10 +30,11 @@ options = webdriver.ChromeOptions()
 # ? This will load the cookies and passwords from
 # ? the orignal Chrome browser
 options.add_argument(
-    r"--user-data-dir=C:\Users\karim\AppData\Local\Google\Chrome\User Data")
+    r"--user-data-dir=E:\karim\Important\AutomationProfile")
 
 # ? This will reduse the amount of lines that
 # ? Selenium prints to the terminal
+options.addArguments("--start-maximized")
 options.add_argument('--log-level=3')
 
 # open the browser
@@ -57,7 +58,7 @@ for group_name in groups.readlines():
         continue
 
     group_name = group_name.strip()
-    
+
     while (True):
         try:
             # STEP #1 Press Main Share Button
@@ -67,7 +68,7 @@ for group_name in groups.readlines():
         except:
             time.sleep(1)
             continue
-    
+
     # STEP #2 Press share in a group button
     WebDriverWait(browser, 10).until(
         EC.presence_of_element_located((By.LINK_TEXT, "Share in a group"))).click()
@@ -91,7 +92,6 @@ for group_name in groups.readlines():
         .click(input_fields[-2])\
         .perform()
 
-    
     input_fields[-2].send_keys(group_name[0])
     time.sleep(1)
     input_fields[-2].send_keys(group_name[1:])

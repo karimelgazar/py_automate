@@ -33,10 +33,11 @@ options = webdriver.ChromeOptions()
 # ? This will load the cookies and passwords from
 # ? the orignal Chrome browser
 options.add_argument(
-    r"--user-data-dir=C:\Users\karim\AppData\Local\Google\Chrome\User Data")
+    r"--user-data-dir=E:\karim\Important\AutomationProfile")
 
 # ? This will reduse the amount of lines that
 # ? Selenium prints to the terminal
+options.addArguments("--start-maximized")
 options.add_argument('--log-level=3')
 
 browser = None
@@ -66,7 +67,7 @@ def prepare_links():
     # ** of the courses the pass the new html to
     # ** Beautiful soup instance
 
-    title = soup.select('h1')[1].getText()
+    title = soup.select('h1')[0].getText()
 
     if 'specializations' in link:
         print('\nSpecialization Title: %s' % title)
@@ -96,7 +97,7 @@ def prepare_links():
             browser = webdriver.Chrome(
                 executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe",
                 chrome_options=options)
-        return [link]
+        return [[title], [link]]
 
 
 def get_spec_courses(soup, spec_title):
@@ -177,8 +178,8 @@ def pick_answers_file():
         # Pick download folder
         print(LINE_SEP)
         Tk().withdraw()  # to hide the small tk window
-        where_to = filedialog.askopenfilename()  # folder picker
-       
+        where_to = filedialog.askopenfilename()  # file picker
+
         if where_to.endswith('.txt'):
             print('Please choose a txt file.')
             continue
@@ -189,12 +190,8 @@ def fill_final_page():
     global browser
 
     # pick the answers txt file
-    print('Please Select the Answers txt file'.title())
-    answers_path = pick_answers_file()
-    # make sure it's a txt file
-    while not answers_path.endwith('.txt'):
-        print('Please Select the Answers txt file'.title())
-        answers_path = pick_answers_file()
+    # print('Please Select the Answers txt file'.title())
+    answers_path = r"E:\karim\Py_Automate\Coursera_financial_aid_script\Coursera_Answers.txt"
     ans = open(answers_path).read().split('##')
 
     # Education dropbox >> Student
@@ -227,7 +224,7 @@ def fill_final_page():
     browser.execute_script("arguments[0].click();", submit_but)
 
     # Give the final submition page to load
-    # before we move to the next coure
+    # before we move to the next course
     # because without this the the brower
     # will load the submition page and
     # skip the next course link
@@ -246,7 +243,7 @@ def fill_the_form_for(link):
 ########################################################
 print(LINE_SEP)
 print('\t\t\tHow To Use\n\t\t', '-' * 25)
-print('Enter the Playlist link to Calculate Total Time.'.title(),
+print('Enter the course or specialization link to start.'.title(),
       'Enter 0 to exit.'.title(), sep='\n')
 print(LINE_SEP)
 
