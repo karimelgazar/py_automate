@@ -1,3 +1,7 @@
+#The Script Should Be Added To 
+#C:\Users\karim\.ipython\profile_default\startup
+
+
 from jupyterthemes import jtplot
 from IPython.core.interactiveshell import InteractiveShell
 
