@@ -20,6 +20,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 
 BASE_LINK = 'https://www.coursera.org'
 LINE_SEP = '#' * 70
@@ -32,8 +33,8 @@ options = webdriver.ChromeOptions()
 
 # ? This will load the cookies and passwords from
 # ? the orignal Chrome browser
-options.add_argument(
-    r"--user-data-dir=E:\karim\Important\AutomationProfile\Default")
+options.add_argument(r"--user-data-dir=E:\karim\Important\AutomationProfile")
+#options.add_argument('--profile-directory=Profile 3')
 
 # ? This will reduse the amount of lines that
 # ? Selenium prints to the terminal
@@ -83,10 +84,16 @@ def prepare_links():
             browser.get(link)
 
             # click the show more button
-            WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH,
-                                                                             '//*[@id="root"]/div[1]/div/div[6]/div/div/div[2]/ul/li/div[2]/button'))
-                                             ).send_keys(Keys.ENTER)
+            # WebDriverWait(browser, 15).until(EC.presence_of_element_located(
+            #                                 (By.NAME,
+            #                                  'Show More'))
+            #                                  ).send_keys(Keys.ENTER)
+            button = browser.find_elements_by_tag_name('button')[-1]
 
+            ActionChains(browser).move_to_element(
+                button).click(button).perform()
+
+            time.sleep(3)
             # pass the new html to soup
             soup = BeautifulSoup(browser.page_source, 'html.parser')
 
@@ -186,7 +193,7 @@ def pick_answers_file():
     return where_to
 
 
-def fill_final_page():
+def fill_final_page(specialization):
     global browser
 
     # pick the answers txt file
