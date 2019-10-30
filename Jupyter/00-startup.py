@@ -2,14 +2,22 @@
 #C:\Users\karim\.ipython\profile_default\startup
 
 
+
+# To make the plot background DARK
+
 from jupyterthemes import jtplot
 from IPython.core.interactiveshell import InteractiveShell
 
 jtplot.style(theme='onedork', context='notebook', ticks=True, grid=False)
 InteractiveShell.ast_node_interactivity = "all"
-line = '%'*80
+
 
 # %matplotlib notebook
+
+# %config InlineBackend.figure_format = 'retina' 
+# this magic command above make plot in high resolution
+# use it just below %matplotlib notebook
+
 
 """
 ********************* VERY IMPORTANT *********************

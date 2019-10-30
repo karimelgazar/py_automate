@@ -20,7 +20,6 @@ import webbrowser
 import re
 from bs4 import BeautifulSoup
 import threading
-import time
 import os
 import sys
 import requests
