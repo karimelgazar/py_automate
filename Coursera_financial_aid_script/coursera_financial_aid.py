@@ -117,8 +117,14 @@ def get_spec_courses(soup, spec_title):
     names_links = [[], []]
     # file = open('%s.txt' % spec_title, 'w')
     for course in all:
-        course_link = BASE_LINK + course.get('href')
         course_name = course.select('h3')[0].getText()
+
+        # don't bother collecting link for capstone
+        # because it doesn't have a finacial aid button
+        if 'Capstone' in course_name:
+            continue
+
+        course_link = BASE_LINK + course.get('href')
         names_links[0].append(course_name)
         names_links[1].append(course_link)
 
@@ -193,7 +199,7 @@ def pick_answers_file():
     return where_to
 
 
-def fill_final_page(specialization):
+def fill_final_page():
     global browser
 
     # pick the answers txt file
@@ -235,7 +241,7 @@ def fill_final_page(specialization):
     # because without this the the brower
     # will load the submition page and
     # skip the next course link
-    time.sleep(7)
+    time.sleep(5)
 
 
 def fill_the_form_for(link):
@@ -283,7 +289,7 @@ for title, link in zip(titles_links[0], titles_links[1]):
         print('%' * 50)
         print('\nSomeThing Went Wrong!\n')
         print('With Course:\n\t%s\n\t%s' % (title, link))
-        print('\nSo I Skipped It And Moved To The Next Course\n\n')
+        print('\nSo I Skipped It And Moved To The Next Course')
         print('The error message:\n%s' % err)
         continue
 
