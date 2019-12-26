@@ -109,9 +109,9 @@ def decorate(html_file, files):
         next_button = "<a href=\"{}\" class=\"btn btn-success\" role=\"button\" style=\"font-size : 50px; width: 100%; height: 75%px;\">Next Concept</a>".format(
             files[indx + 1])
 
-    old = open(html_file, "r", encoding="UTF-8").readlines()
+    old = open(html_file, "r", encoding="UTF-8", errors='ignore').readlines()
 
-    with open(html_file, "w", encoding="UTF-8") as new:
+    with open(html_file, "w", encoding="UTF-8", errors='ignore') as new:
         for line in old:
             if '<footer' in line:
                 new_decoration = decoration.replace('XX1', next_button)
