@@ -5,7 +5,21 @@ import os
 
 
 def decorate(html_file, files):
+    """
+    THIS METHOD: adds decoration to the html files 
+    you sholud edit the variable [decoration]
+    below to add a new decoration to the html 
+
+    Arguments:
+    =========
+        html_file  -- the html file to edit
+        files  -- all html files in this folder
+    """
+
     decoration = '''
+
+    <!-- MY NEW DECORATION  -->
+    
       <div class = "row" >
         <div class = "col-12" >
             <p class="text-center" style="margin-top:50px;">
@@ -109,11 +123,20 @@ def decorate(html_file, files):
         next_button = "<a href=\"{}\" class=\"btn btn-success\" role=\"button\" style=\"font-size : 50px; width: 100%; height: 75%px;\">Next Concept</a>".format(
             files[indx + 1])
 
+    # if ascii errors occured when
+    #  encoding to UTF-8 just ignore them
     old = open(html_file, "r", encoding="UTF-8", errors='ignore').readlines()
 
     with open(html_file, "w", encoding="UTF-8", errors='ignore') as new:
         for line in old:
-            if '<footer' in line:
+
+            # this is so important you should use
+            # </main> so that you can add new features freely
+            # and not to affect the page original source code
+            if '</main>' in line:
+                new.write(line)  # write this line
+
+                # add the decoration
                 new_decoration = decoration.replace('XX1', next_button)
                 new_decoration = new_decoration.replace('XX2', previous_button)
 
