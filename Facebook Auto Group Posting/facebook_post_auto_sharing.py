@@ -86,11 +86,16 @@ for group_name in groups.readlines():
         print('\n\ninclude_original_post was not found.\n'.title())
 
     # STEP #4 Write Group Name Then Share
+    '''fixed the an error: 
+        The error happened when double click 
+        the group name input field 
+        so I make it a single click
+    '''    
     ActionChains(browser)\
         .move_to_element(input_fields[-2])\
         .click(input_fields[-2])\
-        .click(input_fields[-2])\
         .perform()
+    # .click(input_fields[-2])\
 
     if 'الانترنت' in group_name:
         group_name = 'الانترنت'
