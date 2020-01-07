@@ -7,7 +7,7 @@ Description:
     then loops throw all the series episodes in the link
     and extract the direct link for every episode then saves every 
     new direct link to a file .txt so that you can
-    download the whole series at onc by using IDM.
+    download the whole series at onc by using IDM or ADM.
 """
 
 from tkinter import Tk, filedialog
@@ -170,7 +170,7 @@ print('Enter the Series link to download'.title(),
 print(LINE_SEP)
 
 all = prepare_links()
-series_direct_links = open('series_direct_links.txt', 'w')
+series_direct_links = open('ADM.txt', 'w')
 i = 0
 for title, ads_link in zip(all[0], all[1]):
     print('Episode:\n\tTitle: ' + title)
