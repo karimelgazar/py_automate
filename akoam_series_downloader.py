@@ -49,7 +49,7 @@ def download_cover_img(link):
         imageFile.write(chunk)
 
     imageFile.close()
-    print('\nimage download finished ✅ ✅ ✅'.title())
+    print('\nimage download finished  '.title())
     print(LINE_SEP)
 
 
@@ -88,8 +88,8 @@ def make_download_folder(soup):
     if not os.path.exists(os.path.basename(img_link)):
         threading.Thread(target=download_cover_img, args=[img_link]).start()
     else:
-        print('the cover image is ready ✅ ✅ ✅'.title())
-    print('download folder is ready ✅ ✅ ✅'.title())
+        print('the cover image is ready  '.title())
+    print('download folder is ready  '.title())
     print(LINE_SEP)
 
 
@@ -154,8 +154,9 @@ def extract_direct_link(ads_link):
     direct_link = WebDriverWait(browser, 15).until(
         EC.presence_of_element_located((By.CLASS_NAME, "download_button"))).get_attribute("href")
     print('\tDirect Download Link: ' + str(direct_link))
-    print('\tStatus: Done. ✅ ✅ ✅')
+    print('\tStatus: Done.')
 
+    # TODO ADD IDM OPTION AND SOLVE THE ARBIC LANGUAGE PROBLEM
     return direct_link
 
 
@@ -176,11 +177,11 @@ for title, ads_link in zip(all[0], all[1]):
     print('\tAds-Link: ' + ads_link)
     try:
         series_direct_links.write(extract_direct_link(ads_link) + '\n')
-        print('\ttxt file: direct link saved. ✅ ✅ ✅'.title())
+        print('\ttxt file: direct link saved.  '.title())
         i += 1
     except Exception as error:
         print('%' * 50)
-        print('\nSomeThing Went Wrong! ❌ ❌ ❌\n')
+        print('\nSomeThing Went Wrong! \n')
         print('With Episode:\n\t%s\n\t%s' % (title, ads_link))
         print('\nSo I Skipped It And Moved To The Next Episode\n\n')
         print('The error message:\n%s' % error)
