@@ -15,11 +15,18 @@ Description:
     new direct link to a file (ADM.txt) so that you can
     download the whole series at onc by using IDM Descktop Or ADM android app.
 
+    NEW FEATURE:
+    ============
+    NOW there's an option to download with IDM or not so that
+    any direct linkextracted will be added to the queue in IDM
+    then when all links are extracted the queue will begin.
+
 """
 
 from tkinter import Tk, filedialog
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
+from subprocess import Popen as pop
 import webbrowser
 import re
 from bs4 import BeautifulSoup, NavigableString
@@ -29,10 +36,11 @@ import os
 import sys
 import requests
 import pyperclip
+import re
 
 LINE_SEP = '#' * 70
 BASE_PATH = ""
-BASE_LINK = 'egy.best'
+BASE_LINK = 'egybest'
 
 options = webdriver.ChromeOptions()
 # ? This will reduse the amount of lines that
@@ -81,6 +89,47 @@ def make_download_folder(soup, folder_title):
     print('download folder is ready   '.title())
     print(LINE_SEP)
     return download_path
+
+
+def download_with_IDM(direct_link, directory, file_name, last=False):
+    """
+    download the links with idm after extracting
+    you should see this link to see all the avilable
+    parameter that you can pass in the terminal
+    https://www.internetdownloadmanager.com/support/command_line.html
+
+
+    Arguments:
+        directory  -- the output directory where the links txt file
+        links_txt  -- the txt file that has the direct links
+    """
+    change_terminal_to_utf_8 = "chcp 65001"
+    IDM_DIRECTORY = "\"C:\Program Files (x86)\Internet Download Manager\IDMan.exe\""
+    local_path = ' /p \"{}\"'.format(directory.replace('/', '\\').strip())
+    no_questions = ' /n'
+    add_to_queue = ' /a'
+    start_queue = ' /s'
+    download_link = ' /d \"{}\"'.format(direct_link.strip())
+    file_name = re.sub(
+        r"[*:/<>?\|]", "_", file_name)
+    local_file_name = ' /f \"{}\"'.format(file_name.strip())
+
+    #! the program will name arabic files as ????
+    #! this is beacause windows doesn't support passing utf-8
+    #! parameters in the terminal so IDM will get the name wrong as ????
+
+    # ? change terminal code page to UTF-8 BUT DID NOT WORK EITHER
+    # pop(change_terminal_to_utf_8, shell=True)
+
+    COMMAND = IDM_DIRECTORY + download_link + \
+        local_path + local_file_name + no_questions + add_to_queue
+
+    pop(COMMAND, shell=True)  # download file
+
+    # all files are added so start queue now because you can't start queue
+    # while adding a file at the same time
+    if last:
+        pop(IDM_DIRECTORY + start_queue, shell=True)
 
 
 def extract_direct_link(episode_link, browser, quality_num=2):
@@ -142,7 +191,7 @@ def get_folder_title_from(link):
     return soup, folder_title
 
 
-def download_this_season(season_link, quality):
+def download_this_season(season_link, quality, use_idm):
     print(season_link)
     print(LINE_SEP)
 
@@ -160,14 +209,30 @@ def download_this_season(season_link, quality):
     if 'movie' in season_link:
         # If the link was for a movie
         # just download this movie only
-        txt.write(extract_direct_link(
-            season_link, browser, quality) + '\n')
+        direct_link = extract_direct_link(season_link, browser, quality)
+
+        txt.write(direct_link + '\n')
+
+        if use_idm.lower() == 'y':
+            download_with_IDM(direct_link, season_path,
+                              os.path.basename(direct_link), True)
+
     else:
         raw_links = soup.select('.movies_small')[0]  # episodes links
         for episode in raw_links:
             if not isinstance(episode, NavigableString):
-                txt.write(extract_direct_link(
-                    episode.get('href'), browser, quality) + '\n')
+                direct_link = extract_direct_link(
+                    episode.get('href'), browser, quality)
+                txt.write(direct_link + '\n')
+
+                if use_idm.lower() == 'y':
+                    # last episode to download
+                    if raw_links.index(episode) == len(raw_links) - 1:
+                        download_with_IDM(direct_link, season_path,
+                                          os.path.basename(direct_link), True)
+                    else:
+                        download_with_IDM(direct_link, season_path,
+                                          os.path.basename(direct_link))
 
     txt.close()
     browser.quit()
@@ -228,6 +293,16 @@ def check_link_and_download():
         link = input(
             'I see you forgot to enter the Series link.\nPlease, enter it:').strip()
         print(LINE_SEP)
+
+    # Pick where to put the download folder
+    BASE_PATH = pick_download_folder()
+
+    # download with IDM or not
+    use_idm = 'k'
+    while use_idm.lower() != 'y' and use_idm.lower() != 'n':
+        use_idm = input("download with IDM after completion[y/n]: ").title()
+        print(LINE_SEP)
+
     print()
     # the link should not end with
     # strange weird text like >> ?ref=tv-p1
@@ -254,9 +329,6 @@ def check_link_and_download():
         # The links for the whole sereies seasons
         a_tags = soup.select('.contents.movies_small')[0]
 
-        # Pick where to put the download folder
-        BASE_PATH = pick_download_folder()
-
         downloadThreads = []
         for a in a_tags:
             if not isinstance(a, NavigableString):
@@ -264,7 +336,7 @@ def check_link_and_download():
                 # We need to avoid it by checking if our tag object
                 # is an instance of this class
                 thread = threading.Thread(target=download_this_season,
-                                          args=[a.get('href'), quality])
+                                          args=[a.get('href'), quality, use_idm])
                 thread.start()
                 downloadThreads.append(thread)
 
@@ -275,7 +347,7 @@ def check_link_and_download():
 
         return
 
-    download_this_season(link, quality)
+    download_this_season(link, quality, use_idm)
 
 
 ########################################################
