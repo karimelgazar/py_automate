@@ -4,6 +4,14 @@ from tkinter import filedialog, Tk
 import os
 
 
+#TODO ADD emoji to the buttons
+
+#TODO ADD a shortcut to collapse the side bar (Alt+b)
+
+#TODO ADD a button to move to the next lesson in the last concept
+
+#TODO ADD a button to move to the previous lesson in the first concept
+
 def decorate(html_file, files):
     """
     THIS METHOD: adds decoration to the html files 
