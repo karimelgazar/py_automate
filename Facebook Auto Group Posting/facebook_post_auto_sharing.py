@@ -2,8 +2,6 @@
 This Script auto share a specific post 
 to all groups filled in a txt file
 """
-
-
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -13,13 +11,16 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time
 import sys
 
-
-BASE_LINK = 'https://www.facebook.com/karimCodes/posts/'
+BASE_LINK = 'https://www.facebook.com/karimCodes/posts'
 BASE_LINK2 = 'https://www.facebook.com/108780843826246/posts'
+post_link = input('Please Input The Post Link OR ID: ')
 
-post_link = input('Please Input The Post Link: ')
-while BASE_LINK not in post_link and BASE_LINK2 not in post_link:
-    post_link = input('Please Input A Valid Post Link: ')
+if post_link.isdigit() and post_link != '108780843826246':  # ? the post ID was given
+    post_link = '{}/{}'.format(BASE_LINK, post_link)
+
+else:
+    while BASE_LINK not in post_link and BASE_LINK2 not in post_link:
+        post_link = input('Please Input A Valid Post Link: ')
 
 
 # ** This is SO IMPORTANT Because it enables you to
@@ -90,7 +91,7 @@ for group_name in groups.readlines():
         The error happened when double click 
         the group name input field 
         so I make it a single click
-    '''    
+    '''
     ActionChains(browser)\
         .move_to_element(input_fields[-2])\
         .click(input_fields[-2])\
