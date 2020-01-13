@@ -15,103 +15,17 @@ import os
 def decorate(html_file, files):
     """
     THIS METHOD: adds decoration to the html files 
-    you sholud edit the variable [decoration]
-    below to add a new decoration to the html 
+    you sholud edit the decoration.html file
+    to add a new decoration to the html 
 
     Arguments:
     =========
         html_file  -- the html file to edit
         files  -- all html files in this folder
     """
-
-    decoration = '''
-
-    <!-- MY NEW DECORATION  -->
     
-      <div class = "row" >
-        <div class = "col-12" >
-            <p class="text-center" style="margin-top:50px;">
-                XX1
-            </p>
-            <p class="text-center" style="margin-top:25px;">
-                XX2
-            </p>
-            
-        </div>
-      </div>
+    decoration = open('decoration.html', 'r').read()
 
-    </div>
-    <script src="../assets/js/jquery-3.3.1.min.js"></script>
-    <script src="../assets/js/plyr.polyfilled.min.js"></script>
-    <script src="../assets/js/bootstrap.min.js"></script>
-    <script src="../assets/js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="../assets/js/katex.min.js"></script>
- 
-     <script>
-
-    // Initialize Plyr video players
-    const players = Array.from(document.querySelectorAll('video')).map(p => new Plyr(p));
-
-    // render math equations
-    let elMath = document.getElementsByClassName('mathquill');
-    for (let i = 0, len = elMath.length; i < len; i += 1) {
-      const el = elMath[i];
-
-      katex.render(el.textContent, el, {
-        throwOnError: false
-      });
-    }
-
-    // this hack will make sure Bootstrap tabs work when using Handlebars
-    if ($('#question-tabs').length && $('#user-answer-tabs').length) {
-      $("#question-tabs a.nav-link").on('click', function () {
-        $("#question-tab-contents .tab-pane").hide();
-        $($(this).attr("href")).show();
-      });
-      $("#user-answer-tabs a.nav-link").on('click', function () {
-        $("#user-answer-tab-contents .tab-pane").hide();
-        $($(this).attr("href")).show();
-      });
-    } else {
-      $("a.nav-link").on('click', function () {
-        $(".tab-pane").hide();
-        $($(this).attr("href")).show();
-      });
-    }
-
-    // side bar events
-    $(document).ready(function () {
-      $("#sidebar").mCustomScrollbar({
-        theme: "minimal"
-      });
-
-      $('#sidebarCollapse').on('click', function () {
-        $('#sidebar, #content').toggleClass('active');
-        $('.collapse.in').toggleClass('in');
-        $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-      });
-
-      // scroll to first video on page loading
-      if ($('video').length) {
-        $('html,body').animate({ scrollTop: $('div.plyr').prev().offset().top});
-      }
-
-      // auto play first video: this may not work with chrome/safari due to autoplay policy
-      if (players && players.length > 0) {
-        players[0].play();
-      }
-
-      // scroll sidebar to current concept
-      XX3
-      // currentInSideBar.css( "text-decoration", "highlight" );
-      currentInSideBar.css( "background-color", "green" );
-      $("#sidebar").mCustomScrollbar('scrollTo', currentInSideBar);
-    });
-    </script>
-    </body>
-
-    </html>
-    '''
     previous_button = ''
     next_button = ''
     indx = files.index(html_file)
