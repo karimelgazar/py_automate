@@ -2,15 +2,21 @@ import os
 import webbrowser
 from tkinter import filedialog, Tk
 import os
-
+import sys
 
 # TODO ADD a shortcut to collapse the side bar (Alt+b)
 
-# TODO ADD a button to move to the next lesson in the last concept
+SCRIPT_BASE_PATH = sys.path[0]
+decoration = open(SCRIPT_BASE_PATH + '/decoration.html', 'r').read()
+folders = []
 
-# TODO ADD a button to move to the previous lesson in the first concept
 
-def decorate(html_file, files):
+def html_files_in(dirctory):
+    return sorted([x for x in os.listdir(dirctory) if x.endswith(
+        '.html') and not x.startswith('index')])
+
+
+def decorate(html_file, files, dirctory):
     """
     THIS METHOD: adds decoration to the html files
     you sholud edit the decoration.html file
@@ -21,21 +27,37 @@ def decorate(html_file, files):
         html_file  -- the html file to edit
         files  -- all html files in this folder
     """
+    global decoration, folders
 
-    decoration = open('decoration.html', 'r').read()
-
-    previous = ''
-    next = ''
+    previous_button = ''
+    next_button = ''
     indx = files.index(html_file)
+    folder_indx = folders.index(dirctory)
+    scrollbar_index = indx + 1
 
+    if indx >= 0:
+        if indx == 0 and folder_indx > 0:  # the previous lesson button
+            pre_dirctory = folders[folder_indx - 1]
+            folder_name = os.path.basename(pre_dirctory)
+            file = html_files_in(pre_dirctory)[-1]
+            previous_button = "<a href=\"../{}/{}\" class=\"btn btn-warning\" role=\"button\" style=\"font-size : 50px; width: 100%; height: 75%px;background-color: #007bff;\">Previous Lesson 🤖</a>".format(
+                folder_name, file)
 
-   scrollbar_index = indx + 1
+        if indx < len(files) - 1:  # normal next concept button
+            next_button = "<a href=\"{}\" class=\"btn btn-success\" role=\"button\" style=\"font-size : 50px; width: 100%; height: 75%px;\">Next Concept ⚡|🐱‍💻</a>".format(
+                files[indx + 1])
 
-   if indx > 0:
-        previous = files[indx - 1]
+    if indx < len(files) :
+        if (indx == (len(files) - 1)) and (folder_indx < (len(folders) - 1)):  # the next lesson button
+            next_dirctory = folders[folder_indx + 1]
+            folder_name = os.path.basename(next_dirctory)
+            file = html_files_in(next_dirctory)[0]
+            next_button = "<a href=\"../{}/{}\" class=\"btn btn-success\" role=\"button\" style=\"font-size : 50px; width: 100%; height: 75%px;background-color: #007bff;\">Next Lesson 🐱‍🏍</a>".format(
+                folder_name, file)
 
-    if indx < (len(files) - 1):
-        next = files[indx + 1]
+        if indx > 0:
+            previous_button = "<a href=\"{}\" class=\"btn btn-warning\" role=\"button\" style=\"font-size : 50px; width: 100%; height: 75%px;\">Previous Concept 🔍|🚀</a>".format(
+                files[indx - 1])
 
     # if ascii errors occured when
     #  encoding to UTF-8 just ignore them
@@ -50,10 +72,10 @@ def decorate(html_file, files):
                 new.write(line)  # write this line
 
                 # add the decoration
-                new_decoration = decoration.replace('XX1', next)
-                new_decoration = new_decoration.replace('XX2', previous)
+                new_decoration = decoration.replace('XX1', next_button)
+                new_decoration = new_decoration.replace('XX2', previous_button)
 
-                new.write(new_decoration.replace('XX3', scrollbar_index))
+                new.write(new_decoration.replace('XX3', str(scrollbar_index)))
                 print("Done With File: {}".format(html_file))
                 return
             else:
@@ -61,33 +83,34 @@ def decorate(html_file, files):
 
 
 def extract_html_in(dirctory):
-    if 'Part' in dirctory:
-        print(dirctory)
-        print('=' * 30)
 
-        os.chdir(dirctory)
+    print(dirctory)
+    print('=' * 30)
 
-        htmls = sorted([x for x in os.listdir(dirctory) if x.endswith(
-            '.html') and not x.startswith('index')])
-        for html in htmls:
-            decorate(html, htmls)
-        print('this folder is finished\n'.title())
+    os.chdir(dirctory)
+    htmls = html_files_in(dirctory)
+    for html in htmls:
+        decorate(html, htmls, dirctory)
+
+    print('this folder is finished\n'.title())
 
 
 def pick_course():
+    global folders
   # Pick HTMLs Folder
     Tk().withdraw()  # to hide the small tk window
     path = filedialog.askdirectory()  # folder picker
 
-    for item in os.listdir(path):
-        # ? the whole course was given
-        item_absolute_path = os.path.join(path, item)
-        if os.path.isdir(item_absolute_path):
-            extract_html_in(item_absolute_path)
+    # ? a folder for a single module was given not the whole course
+    if 'Part' in path:
+        extract_html_in(path)
+        return
 
-        # ? a folder for a single module was given not the whole course
-        else:
-            extract_html_in(path)
+
+    else:  # ? the whole course was given
+        folders = [os.path.join(path, item) for item in os.listdir(path) if item.startswith('Part') ]
+        for folder in folders:
+                extract_html_in(folder)
 
 
 pick_course()
