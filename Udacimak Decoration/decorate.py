@@ -4,7 +4,6 @@ from tkinter import filedialog, Tk
 import os
 import sys
 
-# TODO ADD a shortcut to collapse the side bar (ctrl+b)
 
 SCRIPT_BASE_PATH = sys.path[0]
 decoration = open(SCRIPT_BASE_PATH + '/decoration.html', 'r').read()
@@ -47,7 +46,7 @@ def decorate(html_file, files, dirctory):
             next_button = "<a href=\"{}\" class=\"btn btn-success\" role=\"button\" style=\"font-size : 50px; width: 100%; height: 75%px;\">Next Concept ⚡|🐱‍💻</a>".format(
                 files[indx + 1])
 
-    if indx < len(files) :
+    if indx < len(files):
         if (indx == (len(files) - 1)) and (folder_indx < (len(folders) - 1)):  # the next lesson button
             next_dirctory = folders[folder_indx + 1]
             folder_name = os.path.basename(next_dirctory)
@@ -95,22 +94,33 @@ def extract_html_in(dirctory):
     print('this folder is finished\n'.title())
 
 
-def pick_course():
+def pick_course(path):
     global folders
-  # Pick HTMLs Folder
-    Tk().withdraw()  # to hide the small tk window
-    path = filedialog.askdirectory()  # folder picker
 
     # ? a folder for a single module was given not the whole course
     if 'Part' in path:
         extract_html_in(path)
         return
 
-
     else:  # ? the whole course was given
-        folders = [os.path.join(path, item) for item in os.listdir(path) if item.startswith('Part') ]
+        folders = [os.path.join(path, item) for item in os.listdir(
+            path) if item.startswith('Part')]
         for folder in folders:
-                extract_html_in(folder)
+            extract_html_in(folder)
 
 
-pick_course()
+# Pick HTMLs Folder
+more_than_one = bool(
+    int(input('The folder contains more than one course[0/1]: ')))
+
+Tk().withdraw()  # to hide the small tk window
+path = filedialog.askdirectory()  # folder picker
+
+if more_than_one:
+    for course in os.listdir(path):
+        full_path = os.path.join(path, course)
+
+        if os.path.isdir(full_path):
+            pick_course(full_path)
+else:
+    pick_course(path)
