@@ -52,6 +52,13 @@
       });
     }
 
+    
+    // automatically hide side bar when the page load
+    $('#sidebar, #content').toggleClass('active');
+    $('.collapse.in').toggleClass('in');
+    $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+     
+
     // side bar events
     $(document).ready(function () {
       $("#sidebar").mCustomScrollbar({
