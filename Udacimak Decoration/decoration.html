@@ -58,6 +58,16 @@
         theme: "minimal"
       });
 
+      // hide side bar when (ctrl+b) is clicked 
+      $(document).keypress("b",function(e) {
+        if(e.ctrlKey){
+          $('#sidebar, #content').toggleClass('active');
+          $('.collapse.in').toggleClass('in');
+          $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        }
+        return false
+      });
+
       $('#sidebarCollapse').on('click', function () {
         $('#sidebar, #content').toggleClass('active');
         $('.collapse.in').toggleClass('in');

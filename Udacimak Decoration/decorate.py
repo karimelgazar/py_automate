@@ -4,7 +4,7 @@ from tkinter import filedialog, Tk
 import os
 import sys
 
-# TODO ADD a shortcut to collapse the side bar (Alt+b)
+# TODO ADD a shortcut to collapse the side bar (ctrl+b)
 
 SCRIPT_BASE_PATH = sys.path[0]
 decoration = open(SCRIPT_BASE_PATH + '/decoration.html', 'r').read()
