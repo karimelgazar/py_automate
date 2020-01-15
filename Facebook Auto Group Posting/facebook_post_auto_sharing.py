@@ -15,11 +15,16 @@ BASE_LINK = 'https://www.facebook.com/karimCodes/posts'
 BASE_LINK2 = 'https://www.facebook.com/108780843826246/posts'
 post_link = input('Please Input The Post Link OR ID: ')
 
-if post_link.isdigit() and post_link != '108780843826246':  # ? the post ID was given
-    post_link = '{}/{}'.format(BASE_LINK, post_link)
 
-else:
-    while BASE_LINK not in post_link and BASE_LINK2 not in post_link:
+while True:
+    if post_link.isdigit() and post_link != '108780843826246':  # ? the post ID was given
+        post_link = '{}/{}'.format(BASE_LINK, post_link)
+        break
+    
+    elif BASE_LINK in post_link or BASE_LINK2 in post_link:
+        break
+    
+    else:
         post_link = input('Please Input A Valid Post Link: ')
 
 
