@@ -81,6 +81,37 @@
         $('a[aria-expanded=true]').attr('aria-expanded', 'false');
       });
 
+      
+      // single key shortcut
+      $(document).bind('keypress', function(e){
+
+        if(e.which == 98){ // letter b -> [back] -> previous item 
+          $('a.btn.btn-warning').get(0).click();
+        }
+
+        if(e.which == 110){ // letter n -> [next] -> next item
+          $('a.btn.btn-success').get(0).click();
+        }
+
+        if(e.which == 104){ // letter h -> [home] -> course home screen
+          const link = $("#mCSB_1_container > ul:nth-child(2) > li > a").attr('href')
+          window.open(link, '_blank'); // in a new tab
+        }
+
+
+        if(e.which == 32){ // backspace -> pause and play the video
+          $("button.plyr__control.plyr__control--overlaid").click();
+        }
+
+        if(e.which == 102){ // letter f -> enter video full screen mode 
+          // $($('div > div.plyr__controls > button:nth-child(7)').get(1)).click();
+	  $('div > div.plyr__controls > button:nth-child(7)').click();
+
+        }
+        
+      });
+
+
       // scroll to first video on page loading
       if ($('video').length) {
         $('html,body').animate({ scrollTop: $('div.plyr').prev().offset().top});
