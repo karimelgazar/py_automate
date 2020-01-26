@@ -105,8 +105,20 @@
 
         if(e.which == 102){ // letter f -> enter video full screen mode 
           // $($('div > div.plyr__controls > button:nth-child(7)').get(1)).click();
-	  $('div > div.plyr__controls > button:nth-child(7)').click();
+	        $('div > div.plyr__controls > button:nth-child(7)').click();
 
+        }
+
+        if(e.which == 122){ // letter (z) -> reset playback speed to normal 
+          players[0].speed = 1.0;
+        }
+        
+        if(e.which == 62){ // letter (>) -> increase playback speed
+          players[0].speed += 0.25;
+        }
+        
+        if(e.which == 60){ // letter (<) -> decrease playback speed
+          players[0].speed -= 0.25;
         }
         
       });
