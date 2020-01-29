@@ -47,8 +47,6 @@ options = webdriver.ChromeOptions()
 # ? Selenium prints to the terminal
 options.add_argument('--log-level=3')
 
-browser = None
-
 
 def download_cover_img(link):
     print('downloading the image'.title())
@@ -110,8 +108,7 @@ def download_with_IDM(direct_link, directory, file_name, last=False):
     add_to_queue = ' /a'
     start_queue = ' /s'
     download_link = ' /d \"{}\"'.format(direct_link.strip())
-    file_name = re.sub(
-        r"[*:/<>?\|]", "_", file_name)
+    file_name = re.sub(r"[*:/<>?\|]", "_", file_name)
     local_file_name = ' /f \"{}\"'.format(file_name.strip())
 
     #! the program will name arabic files as ????
@@ -139,7 +136,7 @@ def extract_direct_link(episode_link, browser, quality_num=2):
 
     # The download buttons in the episode link
     # and clicking the button with the passed quality_number
-    download_buttons_selector = 'a.btn.g.dl.nop._open_window'
+    download_buttons_selector = 'a.btn.g.dl._open_window'
     download_buttons = browser.find_elements_by_css_selector(
         download_buttons_selector)
     download_buttons[quality_num].click()
@@ -153,12 +150,12 @@ def extract_direct_link(episode_link, browser, quality_num=2):
     if direct_link == None:
         # If there is no link with the download button
         # we need to click it to excute JS script
-        browser.find_element_by_class_name("bigbutton").click()
+        # browser.find_element_by_class_name("bigbutton").click()
 
         # If an ads tab was opened we close it
         if len(browser.window_handles) > 2:
-            browser.switch_to.window(browser.window_handles[-1])
             browser.close()
+            browser.switch_to.window(browser.window_handles[-1])
 
         # Switch back to the download page
         browser.switch_to.window(browser.window_handles[-1])
@@ -200,7 +197,8 @@ def download_this_season(season_link, quality, use_idm):
 
     # episodes_links = []
     browser = webdriver.Chrome(
-        executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
+        executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe",
+        chrome_options=options)
 
     # The .txt file must be named ADM
     # so you can download from it using Adm app
@@ -221,8 +219,8 @@ def download_this_season(season_link, quality, use_idm):
         raw_links = soup.select('.movies_small')[0]  # episodes links
         for episode in raw_links:
             if not isinstance(episode, NavigableString):
-                direct_link = extract_direct_link(
-                    episode.get('href'), browser, quality)
+                direct_link = extract_direct_link(episode.get('href'), browser,
+                                                  quality)
                 txt.write(direct_link + '\n')
 
                 if use_idm.lower() == 'y':
@@ -246,8 +244,7 @@ def choose_video_quality():
     print('SD 480p       >> Enter Number 2')
     print('SD 360p       >> Enter Number 3')
 
-    dic = {0: 'Full HD 1080p', 1: 'HD 720p',
-           2: 'SD 480p', 3: 'SD 360p'}
+    dic = {0: 'Full HD 1080p', 1: 'HD 720p', 2: 'SD 480p', 3: 'SD 360p'}
     num = -1
     while num < 0 or num > 3:
         try:
@@ -291,7 +288,8 @@ def check_link_and_download():
     # Getting the link as a terminal arguments
     while BASE_LINK not in link:
         link = input(
-            'I see you forgot to enter the Series link.\nPlease, enter it:').strip()
+            'I see you forgot to enter the Series link.\nPlease, enter it:'
+        ).strip()
         print(LINE_SEP)
 
     # Pick where to put the download folder
@@ -315,7 +313,7 @@ def check_link_and_download():
 
     quality = choose_video_quality()
 
-    print('\nConnecting...\n' + '#'*50 + '\n')
+    print('\nConnecting...\n' + '#' * 50 + '\n')
 
     if 'series' in link:
         # Making the series root Path
@@ -335,8 +333,9 @@ def check_link_and_download():
                 # NavigableString Is an invalid tag in html so
                 # We need to avoid it by checking if our tag object
                 # is an instance of this class
-                thread = threading.Thread(target=download_this_season,
-                                          args=[a.get('href'), quality, use_idm])
+                thread = threading.Thread(
+                    target=download_this_season,
+                    args=[a.get('href'), quality, use_idm])
                 thread.start()
                 downloadThreads.append(thread)
 
@@ -356,7 +355,8 @@ def check_link_and_download():
 print(LINE_SEP)
 print('\t\t\tHow To Use\n\t\t', '-' * 25)
 print('Enter the Series link to download'.title(),
-      'Enter 0 to exit.'.title(), sep='\n')
+      'Enter 0 to exit.'.title(),
+      sep='\n')
 print(LINE_SEP)
 
 check_link_and_download()
