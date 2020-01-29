@@ -1,5 +1,10 @@
 """
+this program allows you to extract the direct links of anime episodes 
+from ww1.animeiat.co website and save these links to ADM.txt
+in the any place you want 
 
+further more it allows to download more than one series at the same time
+also allows you to download with IDM
 """
 
 from tkinter import Tk, filedialog
@@ -18,7 +23,6 @@ import sys
 import requests
 import pyperclip
 import re
-
 
 LINE_SEP = '#' * 70
 BASE_PATH = ""
@@ -51,9 +55,8 @@ def make_download_folder(folder_title):
     # Getting the title from the website
     # title = soup.select('.movie_title h1')[0].getText()
 
-   #! remove special charcter that windows doesn't accept as a folder name
-    folder_title = re.sub(
-        r"[-*:/<>?\|]", "_", folder_title)
+    #! remove special charcter that windows doesn't accept as a folder name
+    folder_title = re.sub(r"[-*:/<>?\|]", "_", folder_title)
 
     download_path = os.path.join(BASE_PATH, folder_title)
     os.makedirs(download_path, exist_ok=True)
@@ -85,8 +88,7 @@ def download_with_IDM(direct_link, directory, file_name, last=False):
     add_to_queue = ' /a'
     start_queue = ' /s'
     download_link = ' /d \"{}\"'.format(direct_link.strip())
-    file_name = re.sub(
-        r"[*:/<>?\|]", "_", file_name)
+    file_name = re.sub(r"[*:/<>?\|]", "_", file_name)
     local_file_name = ' /f \"{}\"'.format(file_name.strip())
 
     #! the program will name arabic files as ????
@@ -173,8 +175,8 @@ def extract_direct_link(episode_link, browser, quality_num=1):
     # go to the download page
     # '/v/' display the video and there is no download button
     # so change it to '/f/' to display the download button
-    download_page_link = first_download_button.get_attribute(
-        'href').replace('/v/', '/f/')
+    download_page_link = first_download_button.get_attribute('href').replace(
+        '/v/', '/f/')
     browser.get(download_page_link)
 
     # the big download button
@@ -184,8 +186,7 @@ def extract_direct_link(episode_link, browser, quality_num=1):
     # waiting for the video quality download buttons to appear
     WebDriverWait(browser, 30).until(
         EC.presence_of_element_located(
-            (By.CSS_SELECTOR,
-             "a.button.is-medium.is-success.clickdownload")))
+            (By.CSS_SELECTOR, "a.button.is-medium.is-success.clickdownload")))
 
     d_buttons = browser.find_elements_by_css_selector(
         "a.button.is-medium.is-success.clickdownload")
@@ -213,7 +214,8 @@ def download_this_anime(anime_link, quality_num, use_idm):
 
     # episodes_links = []
     browser = webdriver.Chrome(
-        executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
+        executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe",
+        chrome_options=options)
 
     # The .txt file must be named ADM
     # so you can download from it using Adm app
@@ -225,8 +227,8 @@ def download_this_anime(anime_link, quality_num, use_idm):
 
     for episode in raw_links:
         if not isinstance(episode, NavigableString):
-            direct_link = extract_direct_link(
-                episode.get('href'), browser, quality_num)
+            direct_link = extract_direct_link(episode.get('href'), browser,
+                                              quality_num)
             txt.write(direct_link + '\n')
 
             if use_idm.lower() == 'y':
@@ -293,8 +295,7 @@ def check_link_and_download():
                     sys.exit()
                 else:
                     break  # the inner loop
-            anime_link = input(
-                'Please, enter a valid anime url:').strip()
+            anime_link = input('Please, enter a valid anime url:').strip()
 
         if anime_link == '0':
             break  # the outer loop
@@ -307,7 +308,8 @@ def check_link_and_download():
         print('-' * 40)
 
         anime_link = input(
-            'Enter another anime url to download or enter 0 to begin: ').strip()
+            'Enter another anime url to download or enter 0 to begin: ').strip(
+            )
 
     print(LINE_SEP)
 
@@ -327,7 +329,7 @@ def check_link_and_download():
         use_idm = input("download with IDM after completion[y/n]: ").title()
         print(LINE_SEP)
 
-    print('\nConnecting...\n' + '#'*50 + '\n')
+    print('\nConnecting...\n' + '#' * 50 + '\n')
 
     downloadThreads = []
     for link in anime_links:
@@ -341,15 +343,16 @@ def check_link_and_download():
         # all the threads finish working
         thread.join()
 
+
 ########################################################
 # THE SCRIPT STARTS EXCUTING FROM HERE
 ########################################################
 
-
 print(LINE_SEP)
 print('\t\t\tHow To Use\n\t\t', '-' * 25)
 print('Enter the Anime link to add it to the download list'.title(),
-      'Enter 0 to begin or exit if no links were entered.'.title(), sep='\n')
+      'Enter 0 to begin or exit if no links were entered.'.title(),
+      sep='\n')
 print(LINE_SEP)
 
 check_link_and_download()
