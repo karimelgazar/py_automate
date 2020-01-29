@@ -1,9 +1,9 @@
 from PIL import Image, ImageFont, ImageDraw
 import numpy as np
 import cv2
-import webbrowser
+import webbrowser,sys
 
-
+SCRIPT_BASE_PATH = sys.path[0]
 problem_number = 'k'
 while not problem_number.isdigit():
     problem_number = input("please input a vaild the probelm number: ".title())
@@ -14,7 +14,7 @@ coordination = (600, 650)
 color = (67, 195, 244)  # BGR
 size = 300  # font size
 
-thumbnail = cv2.imread("Euler Thumbnail/euler.png")
+thumbnail = cv2.imread(SCRIPT_BASE_PATH + "/euler.png")
 
 #
 # Make into PIL Image
