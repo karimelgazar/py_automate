@@ -132,4 +132,4 @@ for group_name in groups.readlines():
 
 
 browser.close()
-# sys.exit()
+sys.exit()
