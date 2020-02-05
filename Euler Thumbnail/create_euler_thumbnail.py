@@ -2,6 +2,8 @@ from PIL import Image, ImageFont, ImageDraw
 import numpy as np
 import cv2
 import webbrowser,sys
+import pyperclip
+
 
 SCRIPT_BASE_PATH = sys.path[0]
 problem_number = 'k'
@@ -10,13 +12,18 @@ while not problem_number.isdigit():
 
 problem_number = '#' + problem_number.zfill(3)
 
+video_name = "Project Euler Problem {} || {} مشروع أويلر مسألة".format(
+                                                problem_number,
+                                                problem_number)
+pyperclip.copy(video_name)
+
 coordination = (600, 650)
 color = (67, 195, 244)  # BGR
 size = 300  # font size
 
 thumbnail = cv2.imread(SCRIPT_BASE_PATH + "/euler.png")
 
-#
+
 # Make into PIL Image
 im_p = Image.fromarray(thumbnail)
 
@@ -36,3 +43,5 @@ result_o = np.array(im_p)
 output_path = 'E:/Captures/'
 cv2.imwrite(output_path + problem_number + '.png', result_o)
 webbrowser.open(output_path)
+
+
