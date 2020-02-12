@@ -12,7 +12,7 @@ while not problem_number.isdigit():
 
 problem_number = '#' + problem_number.zfill(3)
 
-video_name = "Project Euler Problem {} || {} مشروع أويلر مسألة".format(
+video_name = "مشروع أويلر مسألة Project Euler Problem {} || {} ".format(
                                                 problem_number,
                                                 problem_number)
 pyperclip.copy(video_name)
