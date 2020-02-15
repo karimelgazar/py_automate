@@ -1,3 +1,6 @@
+@python "E:/karim/Py_Automate/egyBest_series_downloader.py"
+IF ERRORLEVEL 1 PAUSE && EXIT
+
 """
 Description:
 
@@ -25,6 +28,9 @@ Description:
 
 from tkinter import Tk, filedialog
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
 from selenium import webdriver
 from subprocess import Popen as pop
 import webbrowser
@@ -129,6 +135,26 @@ def download_with_IDM(direct_link, directory, file_name, last=False):
         pop(IDM_DIRECTORY + start_queue, shell=True)
 
 
+def click_to_reload(browser):
+    tab_url = browser.current_url
+
+    if 'egybest' not in tab_url and 'vidstream.online' not in tab_url:
+        browser.close()
+        browser.switch_to.window(browser.window_handles[-1])
+
+    element_to_click = browser.find_element_by_css_selector(
+        "a.bigbutton._reload")
+
+    if element_to_click == None:
+        return None
+
+    else:
+        download_page = browser.current_url
+        time.sleep(2)  # So the direct link can be loaded
+        element_to_click.click()
+        return download_page
+
+
 def extract_direct_link(episode_link, browser, quality_num=2):
     print('\n\topening episode link: '.title(), episode_link)
 
@@ -144,24 +170,36 @@ def extract_direct_link(episode_link, browser, quality_num=2):
     # Switching to the new opened tab
     # from which we will download the episode
     browser.switch_to.window(browser.window_handles[-1])
+
+    # close any page that has a url not in the urls below
+    tab_url = browser.current_url
+    download_page = None
+    direct_link = None
+
     direct_link = browser.find_element_by_class_name(
         "bigbutton").get_attribute("href")
 
-    if direct_link == None:
+    while direct_link == None:
         # If there is no link with the download button
         # we need to click it to excute JS script
         # browser.find_element_by_class_name("bigbutton").click()
+
+        download_page = click_to_reload(browser)
 
         # If an ads tab was opened we close it
         if len(browser.window_handles) > 2:
             browser.close()
             browser.switch_to.window(browser.window_handles[-1])
 
+        if 'vidstream.online' not in browser.current_url:
+            browser.get(download_page)
+
         # Switch back to the download page
         browser.switch_to.window(browser.window_handles[-1])
+        # body > div.mainbody > div > p: nth-child(4) > a.bigbutton._reload
         time.sleep(2)  # So the direct link can be loaded
-        direct_link = browser.find_element_by_class_name(
-            "bigbutton").get_attribute("href")
+        direct_link = WebDriverWait(browser, 15).until(
+            EC.presence_of_all_elements_located((By.CLASS_NAME, "bigbutton")))[0].get_attribute("href")
 
         # Close the download page and then
         # return to the episode original page
