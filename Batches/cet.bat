@@ -1,5 +1,5 @@
 @python "E:/karim/Py_Automate/Euler Thumbnail/create_euler_thumbnail.py"
-IF ERRORLEVEL 1 PAUSE && EXIT
+IF ERRORLEVEL >= 0 PAUSE && EXIT
 
 from PIL import Image, ImageFont, ImageDraw
 import numpy as np
