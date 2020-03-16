@@ -124,6 +124,7 @@ def create_folder_for_problem(number):
     os.chdir('..')  # ? return back to the project base folder
 
 
+# ? Create Argument Parser
 parser = argparse.ArgumentParser()
 arg_help = '''
         Make a folder for a given problem number 
@@ -133,9 +134,8 @@ arg_help = '''
 parser.add_argument('problem',
                     help=arg_help)
 
-args = vars(parser.parse_args())
 
-problem_number = args['problem']
+problem_number = parser.parse_args().problem
 
 if problem_number[0] == ':':
     # ? exclude these 3:
