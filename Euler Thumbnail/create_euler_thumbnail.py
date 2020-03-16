@@ -1,20 +1,24 @@
 from PIL import Image, ImageFont, ImageDraw
 import numpy as np
 import cv2
-import webbrowser,sys
+import webbrowser
+import sys
 import pyperclip
+import argparse
 
 
 SCRIPT_BASE_PATH = sys.path[0]
-problem_number = 'k'
-while not problem_number.isdigit():
-    problem_number = input("please input a vaild the probelm number: ".title())
+parser = argparse.ArgumentParser()
+parser.add_argument('number', help='the problem number'.title(), type=int)
 
+problem_number = str(parser.parse_args().number)
 problem_number = '#' + problem_number.zfill(3)
 
 video_name = "مشروع أويلر مسألة Project Euler Problem {} || {} ".format(
-                                                problem_number,
-                                                problem_number)
+    problem_number,
+    problem_number)
+
+
 pyperclip.copy(video_name)
 
 coordination = (600, 650)
@@ -43,5 +47,3 @@ result_o = np.array(im_p)
 output_path = 'E:/Captures/'
 cv2.imwrite(output_path + problem_number + '.png', result_o)
 webbrowser.open(output_path)
-
-
