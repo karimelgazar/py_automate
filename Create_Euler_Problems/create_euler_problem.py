@@ -107,10 +107,10 @@ def create_folder_for_problem(number):
 
     try:
         os.mkdir(folder_title)
-        print(folder_title)
+        print('[CREATED] {}'.format(folder_title))
         print(LINE_SEP)
     except:
-        print("{} already exists!".format(folder_title).title())
+        print("[INFO] {} already exists!".format(folder_title).title())
         print(LINE_SEP)
         return
 
@@ -125,42 +125,64 @@ def create_folder_for_problem(number):
     os.chdir('..')  # ? return back to the project base folder
 
 
-# ? Create Argument Parser
-parser = argparse.ArgumentParser()
-arg_help = '''
-        Make a folder for a given problem number 
-        >>> OR <<<
-        If passed as (:problem_number) make folders until this given problem number (inclusive)'''
+def get_problem_numeber():
+    """
+    this method returns 
+    1)[int] the problem number 
+    passed to the script and check if it's valid or not
 
-parser.add_argument('problem',
-                    help=arg_help)
+    2)[int] the number of the last problem already exist 
+    to use it to make a group of problems folders
+    OR None if a single problem number was given without (:) sign
+    """
 
+    # ? Create Argument Parser
+    parser = argparse.ArgumentParser()
+    arg_help = '''
+            Make a folder for a given problem number 
+            >>> OR <<<
+            If passed as (:problem_number) make folders until this given problem number (inclusive)'''
 
-problem_number = parser.parse_args().problem
+    parser.add_argument('problem',
+                        help=arg_help)
 
+    problem_number = parser.parse_args().problem
 
-# if invalid input was passed
-# the last char in the string must be an integer
-if not problem_number[-1].isdigit():
-    print('\ninvalid input please pass a [number] or [:number]'.title())
-    print(LINE_SEP)
-    sys.exit()
+    #! ==============================
+    #! Check for Extreme Cases
+    #! ==============================
 
-
-if problem_number[0] == ':':
-    # ? exclude these 3:
-    #  1- .git hidden folder
-    #  2- .gitignore file
-    #  3- Open_Jupyter.py
-    last_problem = len(os.listdir()) - 3
-    until = int(problem_number[1:])
-
-    if last_problem >= until:
-        print('all problems folders already exists'.title())
+    # if invalid input was passed exit because
+    # the last char in the string must be an integer
+    if not problem_number[-1].isdigit():
+        print('\ninvalid input please pass a [number] or [:number]'.title())
         print(LINE_SEP)
         sys.exit()
 
-    for number in range(last_problem + 1, until + 1):
+    # ? craete a grouup of folders
+    if problem_number[0] == ':':
+        # ? exclude these 3:
+        #  1- .git hidden folder
+        #  2- .gitignore file
+        #  3- Open_Jupyter.py
+        last_problem = len(os.listdir()) - 3
+        until = int(problem_number[1:])
+
+        if last_problem >= until:
+            print('[INFO] all problems folders already exists'.title())
+            print(LINE_SEP)
+            sys.exit()
+
+        return until, last_problem
+
+    # ? a single problem number was given
+    return problem_number, None
+
+
+problem_number, lastest_exist = get_problem_numeber()
+
+if lastest_exist:
+    for number in range(lastest_exist + 1, problem_number + 1):
         create_folder_for_problem(number)
 
 else:
