@@ -5,6 +5,7 @@ import sys
 import argparse
 
 BASE_LINK = 'https://projecteuler.net/problem='
+LINE_SEP = '=' * 50 + '\n'
 
 # the text place holders to replace with
 # the problem title & description in the .ipynb file
@@ -107,10 +108,10 @@ def create_folder_for_problem(number):
     try:
         os.mkdir(folder_title)
         print(folder_title)
-        print('=' * 50, '\n')
+        print(LINE_SEP)
     except:
         print("{} already exists!".format(folder_title).title())
-        print('=' * 50, '\n')
+        print(LINE_SEP)
         return
 
     os.chdir(folder_title)
@@ -143,8 +144,14 @@ if problem_number[0] == ':':
     #  2- .gitignore file
     #  3- Open_Jupyter.py
     last_problem = len(os.listdir()) - 3
+    until = int(problem_number[1:])
 
-    for number in range(last_problem + 1, int(problem_number[1:]) + 1):
+    if last_problem >= until:
+        print('all problems folders already exists'.title())
+        print(LINE_SEP)
+        sys.exit()
+
+    for number in range(last_problem + 1, until + 1):
         create_folder_for_problem(number)
 
 else:
