@@ -3,9 +3,11 @@ import requests
 import os
 import sys
 import argparse
+import webbrowser
 
 BASE_LINK = 'https://projecteuler.net/problem='
 LINE_SEP = '=' * 50 + '\n'
+BASE_PATH = 'e:/karim/Projects/# Youtube/Project_Euler'
 
 # the text place holders to replace with
 # the problem title & description in the .ipynb file
@@ -18,7 +20,7 @@ os.chdir(sys.path[0])
 template = open('jupyter_template.json')
 
 # so we can create folders & files
-os.chdir('e:/karim/Projects/# Youtube/Project_Euler')
+os.chdir(BASE_PATH)
 
 
 def make_jupyter(problem_number, problem_title, problem_description):
@@ -179,6 +181,9 @@ def get_problem_numeber():
     return problem_number, None
 
 
+########################################################
+# ? THE SCRIPT STARTS EXCUTING FROM HERE
+########################################################
 problem_number, lastest_exist = get_problem_numeber()
 
 if lastest_exist:
@@ -187,3 +192,6 @@ if lastest_exist:
 
 else:
     create_folder_for_problem(problem_number)
+
+# when finished open the base folder
+webbrowser.open(BASE_PATH)
