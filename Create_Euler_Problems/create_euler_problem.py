@@ -138,6 +138,15 @@ parser.add_argument('problem',
 
 problem_number = parser.parse_args().problem
 
+
+# if invalid input was passed
+# the last char in the string must be an integer
+if not problem_number[-1].isdigit():
+    print('\ninvalid input please pass a [number] or [:number]'.title())
+    print(LINE_SEP)
+    sys.exit()
+
+
 if problem_number[0] == ':':
     # ? exclude these 3:
     #  1- .git hidden folder
