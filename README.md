@@ -1,5 +1,5 @@
 <p align="center"> 
-<img src="preview/allah.png" height=500 width=500/>
+<img src="Preview/allah.png" height=500 width=500/>
 </p>
 
 # Automation With Python [I ❤ Python 🐍]
@@ -8,19 +8,19 @@
 
 [`google_podcast_downloader.py`](https://github.com/karimelgazar/py_automate/blob/master/google_podcast_downloader.py)
 ---
-![](preview/pod.gif)
+![](Preview/pod.gif)
 
 
 [`Coursera_financial_aid_script/coursera_financial_aid.py`](https://github.com/karimelgazar/py_automate/blob/master/Coursera_financial_aid_script/coursera_financial_aid.py)
 ---
-![](preview/cfa.gif)
+![](Preview/cfa.gif)
 
 
 [`Facebook_Auto_Group_Posting/facebook_post_auto_sharing.py`](https://github.com/karimelgazar/py_automate/blob/master/Facebook_Auto_Group_Posting/facebook_post_auto_sharing.py)
 ---
-![](preview/fb.gif)
+![](Preview/fb.gif)
 
 
 [`youtube_playlists_time_counter.py`](https://github.com/karimelgazar/py_automate/blob/master/youtube_playlists_time_counter.py)
 ---
-![](preview/youtube.gif)
+![](Preview/youtube.gif)
