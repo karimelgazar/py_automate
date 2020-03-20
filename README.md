@@ -1,50 +1,22 @@
-# Donloading Files with IDM via Command Line (Terminal)
+<p align="center"> 
+<img src="preview/allah.png" height=500 width=500/>
+</p>
 
-## idman_path  /d URL [/p local_path] [/f local_file_name] [/q] [/h][/n] [/a]
+# Automation With Python [I ❤ Python 🐍]
+### This repo contians python projects to automate the web and boring stuff using Beautifulsoup, Selenium, ...etc. `I won't talk alot let the code speak for itself`
 
-## Parameters:
-### /d URL 
- **file direct download link**
-e.g. IDMan.exe /d "http://www.internetdownloadmanager.com/path/FileName.zip"
-
+[`google_podcast_downloader.py`](https://github.com/karimelgazar/py_automate/blob/master/google_podcast_downloader.py)
 ---
+![](preview/pod.gif)
 
-### /s 
- **starts queue in scheduler**
 
+[`Coursera_financial_aid_script/coursera_financial_aid.py`](https://github.com/karimelgazar/py_automate/blob/master/Coursera_financial_aid_script/coursera_financial_aid.py)
 ---
+![](preview/cfa.gif)
 
-### /p local_path 
-  **defines the local path where to save the file**
 
+[`Facebook Auto Group Posting/facebook_post_auto_sharing.py`](https://github.com/karimelgazar/py_automate/blob/master/Facebook Auto Group Posting/facebook_post_auto_sharing.py)
 ---
+![](preview/pod.gif)
 
-### /f local_file_name 
- **defines the local file name to save the file**
 
----
-
-### /q 
- **IDM will exit after the successful downloading. This parameter works only for the first copy**
-
----
-
-### /h 
- **IDM will hang up your connection after the successful downloading**
-
----
-
-### /n 
- **turns on the silent mode when IDM doesn't ask any questions**
-
----
-
-### /a 
- **add a file specified with /d to download queue, but don't start downloading**
-
----
-
-## Parameters /a, /h, /n, /q, /f local_file_name, /p local_path work only if you specified the file to download with /d URL
-
-## The original documentation link
-https://www.internetdownloadmanager.com/support/command_line.html
