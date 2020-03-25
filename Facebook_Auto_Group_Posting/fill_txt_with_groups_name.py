@@ -39,12 +39,15 @@ browser = webdriver.Chrome(
 browser.get(groups_link)
 groups = browser.find_elements_by_css_selector(groups_name_css_selector)
 
-txt = open("E:\karim\Py_Automate\Facebook Auto Group Posting\\" +
-           'groups_names.txt', 'w', encoding='UTF-8')
+txt = open("E:\karim\Py_Automate\Facebook_Auto_Group_Posting\groups_names.txt",
+           'w', encoding='UTF-8')
 print(LINE_SEP,
       'Working...',
       LINE_SEP, sep='\n')
 for group in groups:
-    txt.write(group.text + '\n')
+    line = group.text
+    if 'رياضيات' in line:
+        continue
+    txt.write(line + '\n')
 
 browser.close()

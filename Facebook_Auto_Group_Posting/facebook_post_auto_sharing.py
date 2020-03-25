@@ -53,7 +53,7 @@ browser.get(post_link)
 time.sleep(2)
 # input_fields, buttons = None, None
 groups = open(
-    "E:\karim\Py_Automate\Facebook Auto Group Posting\groups_names.txt",
+    "E:\karim\Py_Automate\Facebook_Auto_Group_Posting\groups_names.txt",
     'r',
     encoding='UTF-8')
 
