@@ -5,27 +5,39 @@ import sys
 import argparse
 import webbrowser
 
+# تغيير الدليل إلى مسار البرنامج النصي
+#  حتى نتمكن من العثور على الملفات
+# 1: "jupyter_template.json"
+# 2: "problem_folder_path.txt"
+os.chdir(sys.path[0])
+
+
 BASE_LINK = 'https://projecteuler.net/problem='
 LINE_SEP = '=' * 50 + '\n'
-BASE_PATH = 'e:/karim/Projects/# Youtube/Project_Euler'
 
-# the text place holders to replace with
-# the problem title & description in the .ipynb file
+
+#! المكان النص الذى سيتم استبداله بــ
+#!.ipynb عنوان المشكلة ووصفها في ملف
+# ? لم ندرج علامة التنصيص (\")
+# ? لأننا نحتاجها لكتابة رأس المشكلة
 TO_FILL_PT = '**PROBLEM_TITLE**'
+
+# ? تضمين علامة التنصيص ("\) لأننا نريد استبدالها
+# ? وإذا لم نستخدمه ، فإن ملف الجاسون سيعطي خطأ
 TO_FILL_PC = '\"**PROBLEM_CONTENT**\"'
 
-# change directory to the script path
-# so we can find "jupyter_template.json" file
-os.chdir(sys.path[0])
-template = open('jupyter_template.json')
+template = open('jupyter_template.json', encoding="UTF-8")
 
-# so we can create folders & files
+BASE_PATH = open("problem_folder_path.txt", 'r',
+                 encoding='UTF-8').read().strip()
+
+# وبالتالى يمكننا إنشاء الملفات والمجلدات داخل مجلد المسائل الرئيسى
 os.chdir(BASE_PATH)
 
 
 def make_jupyter(problem_number, problem_title, problem_description):
     """
-    create the .ipynb file
+    تقوم الدالة بانشاء ملف جوبيتر
 
     Arguments:
         problem_number {str}  
@@ -34,31 +46,36 @@ def make_jupyter(problem_number, problem_title, problem_description):
     """
 
     with open('{}.ipynb'.format(problem_number), 'w', encoding="UTF-8") as jupyter:
-        for line in template.readlines():  # read the temlplate
+        for line in template.readlines():  # اقرأ القالب
 
-            # replace the place holder with the problem title
+            # ضع عنوان المشكلة
             if TO_FILL_PT in line:
                 jupyter.write(line.replace(TO_FILL_PT, problem_title))
 
-            # replace the place holder with the problem description
+            # ضع وصف المشكلة
             elif TO_FILL_PC in line:
-                # markdown does not allow multiple lines to be included
-                # in the same double quotes ("") so 'X\nY' should be
-                # "X",
-                # "Y"
+                #!  لا تسمح بوجود كلام متعدد الاسطر داخل نفس اقواس التنصيص markdown
+                # ?  يجب ان يكون كالتالى "X\nY" ولذلك
+                """
+                    "X",
+                    "Y"
+                """
                 html = str(problem_description).split('\n')
                 for i, code in enumerate(html):
-                    # ? this is important because we need to escape
-                    # ? the double quotes by finding it through (\")
-                    # ? then replacing it by (\\") so that markdown
-                    # ? treat it as a (") otherwise errors will happen
+  
+                    #! هذا مهم جدا
+                    # ? (\\")نحن نحتاج الى استبدال ("\) بــ
+                    # ? (\")حتى تسسطيع بايثون ان تكتبها كـ
+                    # ? ان تفهمها markdown وبالتالى تستطيع لغة ال
+                    # ? كــ(") والا سيحدث خطأ
                     code = code.replace('\"', '\\"')
-                    # as I noticed you must add (\n) before the end quote
-                    # to mimic the original html code
+
+                    #! قبل نهاية علامة التنصيص (\n) لقد اكتشقت أنه يجب إضافة
+                    #! الأصلي html  لمحاكاة كود
                     code = "\"{}\\n\"".format(code)
                     jupyter.write(code)
 
-                    if i != len(html) - 1:  # if not the last line
+                    if i != len(html) - 1:  # اذا لم يكن آخر سطر
                         jupyter.write(',\n')
 
             else:
@@ -67,7 +84,7 @@ def make_jupyter(problem_number, problem_title, problem_description):
 
 def make_python(problem_number, problem_title, problem_description):
     """
-     create the .py file
+     تقوم الدالة بانشاء ملف بايثون
 
     Arguments:
         problem_number {str}  
@@ -84,16 +101,16 @@ def make_python(problem_number, problem_title, problem_description):
 
 def get_title_desc_of(problem_number):
     """
-    returns the title and description of a problem given its number
+    تقوم بارجاع عنوان ووصف المسألة باستخدام الرقم المعطى فقط
 
     Arguments:
         problem_number {str}
     """
 
-    # get the html code of the problem
+    # htmlاستخرج كود الــ
     req = requests.get(BASE_LINK + problem_number)
 
-    # use soup to get the problem title & description
+    # احصل على اعنوان ووصف المسألة
     soup = BeautifulSoup(req.text, "html.parser")
     problem_title = soup.select('#content > h2')[0].text
     problem_description = soup.select('.problem_content')[0]
@@ -103,6 +120,16 @@ def get_title_desc_of(problem_number):
 
 
 def create_folder_for_problem(number):
+    """
+    تقوم بانشاء مجلد للمسألة باستخدام الرقم المعطى فقط
+
+    Arguments:
+        number {int} -- رقم المسألة
+    """
+    if int(number) <= 0:
+        print('\nproblem number must be bigger than zero.'.title())
+        print(LINE_SEP)
+        sys.exit()
 
     problem_number = str(number).zfill(3)
     folder_title, problem_description = get_title_desc_of(problem_number)
@@ -119,79 +146,107 @@ def create_folder_for_problem(number):
     os.chdir(folder_title)
     problem_title = folder_title[len(problem_number):].strip()
 
-    # ? create the .py file
+    # ? انشاء ملف بايثون
     make_python(problem_number, problem_title, problem_description)
-    # ? create the .ipynb file
+    # ? انشاء ملف جوبيتر
     make_jupyter(problem_number, problem_title, problem_description)
 
-    os.chdir('..')  # ? return back to the project base folder
+    os.chdir('..')  # ? ارجع الى مجلد المسائل الأساسى
+
+
+def extract_number(text):
+    """
+
+    استخرج رقم المسائل من النص الذي تم تمريره
+    والتحقق مما إذا كان هناك العديد من المسائل لإنشائها أم لا
+
+    Arguments:
+        text {str} -- النص المعطى فى الترمينال
+
+    Returns:
+        (int(text), many_problems) {tuple} 
+    """
+
+    # ? إذا كان هناك العديد من المسائل لإنشائها أم لا
+    many_problems = False
+
+    # ? هناك العديد من المسائل لإنشائها
+    if text[0] == ':':
+        # ? (:)افحص الجزء بعد الــ
+        text = text[1:]
+        many_problems = True
+
+    if not text.isdigit():
+        print('\ninvalid input please pass a [number] or [:number]'.title())
+        print(LINE_SEP)
+        sys.exit()
+
+    return int(text), many_problems
 
 
 def get_problem_numeber():
     """
-    this method returns 
-    1)[int] the problem number 
-    passed to the script and check if it's valid or not
+    ترجع هذه الدالة
+    1: [int] رقم المشكلة
+    تمريره إلى الترمينال والتحقق مما إذا كان صالح 
 
-    2)[int] the number of the last problem already exist 
-    to use it to make a group of problems folders
-    OR None if a single problem number was given without (:) sign
+    2: [int] رقم آخر مسألة موجود بالفعل
+    لاستخدامه في إنشاء مجموعة من مجلدات المسائل
+    (:)ولا ترجعه إذا تم إعطاء رقم مشكلة واحدة بدون علامة الــ 
     """
 
-    # ? Create Argument Parser
+    # ? تجهيز الترمينال
     parser = argparse.ArgumentParser()
     arg_help = '''
             Make a folder for a given problem number 
             >>> OR <<<
-            If passed as (:problem_number) make folders until this given problem number (inclusive)'''
+            If passed as (:problem_number) make folders
+            until this given problem number (inclusive)'''
 
     parser.add_argument('problem',
                         help=arg_help)
 
     problem_number = parser.parse_args().problem
 
-    #! ==============================
-    #! Check for Extreme Cases
-    #! ==============================
+    problem_number, many_problems = extract_number(problem_number)
 
-    # if invalid input was passed exit because
-    # the last char in the string must be an integer
-    if not problem_number[-1].isdigit():
-        print('\ninvalid input please pass a [number] or [:number]'.title())
-        print(LINE_SEP)
-        sys.exit()
+    # ? تم اعطاء رقم لمسألة واحدة
+    # ? ولذلك لا نحتاج لارجاع رقم اخر مسالة موجودة
+    last_problem = None
 
-    # ? craete a grouup of folders
-    if problem_number[0] == ':':
-        # ? exclude these 3:
-        #  1- .git hidden folder
-        #  2- .gitignore file
-        #  3- Open_Jupyter.py
-        last_problem = len(os.listdir()) - 3
-        until = int(problem_number[1:])
+    # ? انشاء مجموعة من المجلدات
+    if many_problems:
+        exclude = 1
+        folder_content = os.listdir()
 
-        if last_problem >= until:
+        if '.git' in folder_content:
+            # ? تجاهل هؤلاء الـثلاثة:
+            #  1- .git hidden folder
+            #  2- .gitignore file
+            #  3- Open_Jupyter.py
+            exclude = 3
+
+        last_problem = len(folder_content) - exclude
+
+        if last_problem >= problem_number:
             print('[INFO] all problems folders already exists'.title())
             print(LINE_SEP)
             sys.exit()
 
-        return until, last_problem
-
-    # ? a single problem number was given
-    return problem_number, None
+    return problem_number, last_problem
 
 
 ########################################################
-# ? THE SCRIPT STARTS EXCUTING FROM HERE
+# ? البرنامج يبدأ هنا
 ########################################################
 problem_number, lastest_exist = get_problem_numeber()
 
-if lastest_exist:
+if lastest_exist != None:
     for number in range(lastest_exist + 1, problem_number + 1):
         create_folder_for_problem(number)
 
 else:
     create_folder_for_problem(problem_number)
 
-# when finished open the base folder
+#! عند الانتهاء قم بفتح المجلد الاساسى
 webbrowser.open(BASE_PATH)
