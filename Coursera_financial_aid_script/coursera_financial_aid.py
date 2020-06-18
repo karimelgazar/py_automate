@@ -14,6 +14,7 @@ import pyperclip
 import time
 from pprint import pprint
 from bs4 import BeautifulSoup
+from webdriver_manager.chrome import ChromeDriverManager
 import selenium.common.exceptions as sel_exceptions
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -33,7 +34,8 @@ options = webdriver.ChromeOptions()
 
 # ? This will load the cookies and passwords from
 # ? the orignal Chrome browser
-options.add_argument(r"--user-data-dir=E:\karim\Important\AutomationProfile")
+options.add_argument(
+r"--user-data-dir=/home/km/karim/Important/automation_profile")
 #options.add_argument('--profile-directory=Profile 3')
 
 # ? This will reduse the amount of lines that
@@ -79,7 +81,7 @@ def prepare_links():
         if show_more_button != None:
             # open the browser
             browser = webdriver.Chrome(
-                executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe",
+                ChromeDriverManager().install(),
                 chrome_options=options)
             browser.get(link)
 
@@ -102,7 +104,7 @@ def prepare_links():
         print('Course Title: %s\n' % title + '#'*50)
         if browser == None:
             browser = webdriver.Chrome(
-                executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe",
+                ChromeDriverManager().install(),
                 chrome_options=options)
         return [[title], [link]]
 
@@ -133,7 +135,7 @@ def get_spec_courses(soup, spec_title):
 
     if browser == None:
         browser = webdriver.Chrome(
-            executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
+            ChromeDriverManager().install(), chrome_options=options)
     return names_links
 
 
@@ -163,6 +165,7 @@ def fill_first_page(link):
     browser.execute_script("arguments[0].click();", apply)
 
     # Watting until the page is loaded to check the boxes
+    time.sleep(2)
     c1 = WebDriverWait(browser, 10).until(
         EC.presence_of_element_located((By.ID, "info_checkbox")))
     browser.execute_script("arguments[0].click();", c1)
@@ -204,7 +207,7 @@ def fill_final_page():
 
     # pick the answers txt file
     # print('Please Select the Answers txt file'.title())
-    answers_path = r"E:\karim\Py_Automate\Coursera_financial_aid_script\Coursera_Answers.txt"
+    answers_path = r"/home/km/karim/py_automate/Coursera_financial_aid_script/Coursera_Answers.txt"
     ans = open(answers_path).read().split('##')
 
     # Education dropbox >> Student
@@ -278,7 +281,7 @@ for title, link in zip(titles_links[0], titles_links[1]):
         i += 1
     except sel_exceptions.NoSuchWindowException:
         browser = webdriver.Chrome(
-            executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", chrome_options=options)
+            ChromeDriverManager().install(), chrome_options=options)
 
         print(
             '\nThe Browser was Closed.' +
@@ -291,8 +294,11 @@ for title, link in zip(titles_links[0], titles_links[1]):
         print('With Course:\n\t%s\n\t%s' % (title, link))
         print('\nSo I Skipped It And Moved To The Next Course')
         print('The error message:\n%s' % err)
+        #time.sleep(230)
         continue
+        
+    input("Continue?: ")
 
 
-browser.quit()
-sys.exit()
+#browser.quit()
+#sys.exit()
