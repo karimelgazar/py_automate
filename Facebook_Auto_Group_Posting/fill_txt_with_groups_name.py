@@ -3,7 +3,7 @@ This scripts fill a txt file with
 all the groups my page joined
 """
 
-
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -24,7 +24,12 @@ options = webdriver.ChromeOptions()
 # ? This will load the cookies and passwords from
 # ? the orignal Chrome browser
 options.add_argument(
-    r"--user-data-dir=E:\karim\Important\AutomationProfile")
+
+    # "--user-data-dir=/home/km/.config/google-chrome/Profile 1")
+    "--user-data-dir=/home/km/karim/Important/automation_profile")
+# "--profile-directory=Profile 1")
+
+# r"--user-data-dir=/home/km/.config/google-chrome/Profile 1")
 
 # ? This will reduse the amount of lines that
 # ? Selenium prints to the terminal
@@ -33,13 +38,14 @@ options.add_argument('--log-level=3')
 
 # open the browser
 browser = webdriver.Chrome(
-    executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe",
+    ChromeDriverManager().install(),
     options=options)
 
 browser.get(groups_link)
+
 groups = browser.find_elements_by_css_selector(groups_name_css_selector)
 
-txt = open("E:\karim\Py_Automate\Facebook_Auto_Group_Posting\groups_names.txt",
+txt = open("/home/km/karim/py_automate/Facebook_Auto_Group_Posting/groups_names.txt",
            'w', encoding='UTF-8')
 print(LINE_SEP,
       'Working...',

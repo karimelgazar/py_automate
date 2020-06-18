@@ -2,6 +2,7 @@
 This Script auto share a specific post 
 to all groups filled in a txt file
 """
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -20,10 +21,10 @@ while True:
     if post_link.isdigit() and post_link != '108780843826246':  # ? the post ID was given
         post_link = '{}/{}'.format(BASE_LINK, post_link)
         break
-    
+
     elif BASE_LINK in post_link or BASE_LINK2 in post_link:
         break
-    
+
     else:
         post_link = input('Please Input A Valid Post Link: ')
 
@@ -36,8 +37,8 @@ options = webdriver.ChromeOptions()
 # ? This will load the cookies and passwords from
 # ? the orignal Chrome browser
 options.add_argument(
-    r"--user-data-dir=E:\karim\Important\AutomationProfile")
-
+    #    "--user-data-dir=\"/home/km/.config/google-chrome/Profile\ 1\"")
+    "--user-data-dir=/home/km/karim/Important/automation_profile")
 # ? This will reduse the amount of lines that
 # ? Selenium prints to the terminal
 options.add_argument("--start-maximized")
@@ -45,7 +46,7 @@ options.add_argument('--log-level=3')
 
 # open the browser
 browser = webdriver.Chrome(
-    executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe",
+    ChromeDriverManager().install(),
     options=options)
 browser.get(post_link)
 
@@ -53,7 +54,7 @@ browser.get(post_link)
 time.sleep(2)
 # input_fields, buttons = None, None
 groups = open(
-    "E:\karim\Py_Automate\Facebook_Auto_Group_Posting\groups_names.txt",
+    "/home/km/karim/py_automate/Facebook_Auto_Group_Posting/groups_names.txt",
     'r',
     encoding='UTF-8')
 
@@ -78,8 +79,12 @@ for group_name in groups.readlines():
     # STEP #2 Press share in a group button
     WebDriverWait(browser, 10).until(
         EC.presence_of_element_located((By.LINK_TEXT, "Share in a group"))).click()
+        
+    # wait for the pop up window so you can input the group name
+    WebDriverWait(browser, 30).until(
+        EC.presence_of_element_located((By.LINK_TEXT, "Share in a group")))
 
-    time.sleep(2)
+    #time.sleep(2)
     input_fields = browser.find_elements_by_tag_name('input')
 
    # STEP #3 press the CheckBox include_original_post if exists
@@ -92,16 +97,19 @@ for group_name in groups.readlines():
         print('\n\ninclude_original_post was not found.\n'.title())
 
     # STEP #4 Write Group Name Then Share
-    '''fixed the an error: 
+    '''fixed an error: 
         The error happened when double click 
         the group name input field 
         so I make it a single click
     '''
+    # input_fields[-2] = browser.find_element_by_link_text("Group name")
+    # time.sleep(2)
     ActionChains(browser)\
         .move_to_element(input_fields[-2])\
         .click(input_fields[-2])\
         .perform()
     # .click(input_fields[-2])\
+    #   .click(input_fields[-2])\
 
     if 'الانترنت' in group_name:
         group_name = 'الانترنت'
