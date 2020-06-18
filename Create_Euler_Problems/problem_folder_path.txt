@@ -1,1 +1,1 @@
-E:\karim\Projects\# Youtube\Project_Euler
+/home/km/Youtube/Project_Euler
