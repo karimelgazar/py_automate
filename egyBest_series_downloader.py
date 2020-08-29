@@ -29,6 +29,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from subprocess import Popen as pop
 import webbrowser
 import re
@@ -232,7 +233,7 @@ def download_this_season(season_link, quality, use_idm):
 
     # episodes_links = []
     browser = webdriver.Chrome(
-        executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe",
+        ChromeDriverManager().install(),
         chrome_options=options)
 
     # The .txt file must be named ADM
