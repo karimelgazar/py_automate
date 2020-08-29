@@ -11,6 +11,7 @@ Description:
 """
 
 from tkinter import Tk, filedialog
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -135,7 +136,8 @@ def prepare_links():
         titles_ads_link[1].append(all_epi_links[i].get('href'))
 
     browser = webdriver.Chrome(
-        executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe", options=options)
+        ChromeDriverManager().install(),
+        options=options)
 
     return titles_ads_link
 
@@ -192,5 +194,5 @@ for title, ads_link in zip(all[0], all[1]):
 browser.quit()
 series_direct_links.close()
 
-webbrowser.open(BASE_BATH)
+# webbrowser.open(BASE_BATH)
 sys.exit()

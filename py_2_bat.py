@@ -1,7 +1,7 @@
 import os
 from tkinter import filedialog, Tk
 
-BASE_DIR = "E:\karim\Py_Automate"
+BASE_DIR = "/home/km/karim/py_automate"
 
 Tk().withdraw()
 files = filedialog.askopenfilenames()

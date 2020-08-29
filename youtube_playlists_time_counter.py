@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 import sys
 import os
 import webbrowser
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -107,7 +108,8 @@ def info_of_this_playlist(playlist_link, html, txt_file=None):
 
 def info_of_all_playlists(link):
     """Extract information for a link of a group of playlists"""
-    bro = webdriver.Chrome()
+    bro =  webdriver.Chrome(
+        ChromeDriverManager().install())
     bro.get(link)
 
     soup = BeautifulSoup(bro.page_source, 'html.parser')
@@ -172,7 +174,8 @@ def check_link():
     while link != '0':
         if link.startswith(PLAYLIST_BASE_LINK):
             """A link for a single list"""
-            bro = webdriver.Chrome()
+            bro = webdriver.Chrome(
+        		ChromeDriverManager().install())
             bro.get(link)
             info_of_this_playlist(link, bro.page_source)
             bro.quit()

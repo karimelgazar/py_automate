@@ -6,7 +6,7 @@ in the any place you want
 further more it allows to download more than one series at the same time
 also allows you to download with IDM
 """
-
+from webdriver_manager.chrome import ChromeDriverManager
 from tkinter import Tk, filedialog
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -214,7 +214,7 @@ def download_this_anime(anime_link, quality_num, use_idm):
 
     # episodes_links = []
     browser = webdriver.Chrome(
-        executable_path="E:\Progammes\chromedriver_win32\chromedriver.exe",
+        ChromeDriverManager().install(),
         chrome_options=options)
 
     # The .txt file must be named ADM
@@ -309,7 +309,7 @@ def check_link_and_download():
 
         anime_link = input(
             'Enter another anime url to download or enter 0 to begin: ').strip(
-            )
+        )
 
     print(LINE_SEP)
 
