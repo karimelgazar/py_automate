@@ -1,4 +1,3 @@
-import os
 import webbrowser
 from tkinter import filedialog, Tk
 import os

@@ -10,7 +10,6 @@ Description:
 from tkinter import Tk, filedialog
 import requests
 import sys
-import pyperclip
 import time
 from pprint import pprint
 from bs4 import BeautifulSoup
@@ -35,7 +34,7 @@ options = webdriver.ChromeOptions()
 # ? This will load the cookies and passwords from
 # ? the orignal Chrome browser
 options.add_argument(
-r"--user-data-dir=/home/km/karim/Important/automation_profile")
+    r"--user-data-dir=/home/km/karim/Important/automation_profile")
 #options.add_argument('--profile-directory=Profile 3')
 
 # ? This will reduse the amount of lines that
@@ -294,11 +293,11 @@ for title, link in zip(titles_links[0], titles_links[1]):
         print('With Course:\n\t%s\n\t%s' % (title, link))
         print('\nSo I Skipped It And Moved To The Next Course')
         print('The error message:\n%s' % err)
-        #time.sleep(230)
+        # time.sleep(230)
         continue
-        
+
     input("Continue?: ")
 
 
-#browser.quit()
-#sys.exit()
+# browser.quit()
+# sys.exit()

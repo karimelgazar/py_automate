@@ -1,4 +1,4 @@
-@"E:\Progammes\Anaconda\python.exe" "E:\karim\Py_Automate\Udacimak Decoration\decorate.py"
+@"E:\Progammes\Anaconda\python.exe" "/home/km/karim/py_automate\Udacimak Decoration\decorate.py"
 
 
 import os
