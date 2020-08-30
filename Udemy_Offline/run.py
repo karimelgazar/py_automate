@@ -1,3 +1,20 @@
+"""
+IMPORTANT NOTES
+====================
+
+1) Don't keep any files inside the course folder ONLY the course WALLPAPER
+    so put them inside another folder because the script will choose the first file
+    inside the course folder as the course wallpaper
+
+2) The script will modify the original html files but before that the script
+    will copy them into files with same name but end with "_original.html".
+
+3) HTML5 specification does not support subtitle format other than webvtt,
+    so you need a webvtt format subtitle for the src. so we create will convert
+    the srt subtuile to vtt subtitle if the "vtt" subtitle file did not already exists
+"""
+
+
 import argparse
 import os
 import re
@@ -20,6 +37,7 @@ ITEM_INDEX = '$ITEM_INDEX$'
 SUBS_PLACEHOLDER = '$SUBS$'
 LESSON_CONTENT = "$LESSON_CONTENT$"
 COURSE_TITLE = '$COURSE_TITLE$'
+WALPAPER_IMAGE = '$WALPAPER_IMAGE$'
 
 CONTENT_VIDEO = """
 <video controls>
@@ -308,7 +326,21 @@ def first_replace(folder_path, item_path, file_indx, is_html=False):
     return temp
 
 
-def create_index_file(temp_path, folder, items_code):
+def select_wallpaper_from(folder):
+    image = None
+    valid_images_exts = [".jpg", ".gif", ".png", ".tga", "jpeg"]
+
+    for file in sorted(os.listdir(folder)):
+        # if this is not a file
+
+        ext = os.path.splitext(file)[1]
+        if ext.lower() in valid_images_exts:
+            image = file
+
+    return image
+
+
+def create_index_file(temp_path, folder, items_code, is_the_course_index=False):
     with open(temp_path) as file:
         html_temp = file.read()
         html_temp = html_temp.replace(
@@ -318,6 +350,11 @@ def create_index_file(temp_path, folder, items_code):
             html_temp = html_temp.replace(
                 SIDEBAR_ITEMS_PLACEHOLDER, items_code)
 
+            #! we need to select the wallpaper
+            if is_the_course_index:
+                image = select_wallpaper_from(folder)
+                if image != None:
+                    html_temp = html_temp.replace(WALPAPER_IMAGE, image)
             index.write(html_temp)
 
 
@@ -479,6 +516,9 @@ create_videos_html_files()
 
 # ?==========================================================
 #! create course "index.html" file
-create_index_file(os.path.join(SCRIPT_PATH, 'course_template.html'),
-                  COURSE_FOLDER, sidebar_items_code(LIST_FOLDERS, True))
+create_index_file(
+    os.path.join(SCRIPT_PATH, 'course_template.html'),
+    COURSE_FOLDER,
+    sidebar_items_code(LIST_FOLDERS, True),
+    is_the_course_index=True)
 # ?==========================================================
