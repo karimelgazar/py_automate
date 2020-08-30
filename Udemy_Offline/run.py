@@ -4,6 +4,7 @@ import re
 import sys
 from distutils.dir_util import copy_tree
 from pprint import pprint
+import webvtt  # pip install webvtt-py
 
 SCRIPT_PATH = sys.path[0]
 LINE_SEP = '='*50
@@ -51,32 +52,35 @@ def next_prev_items_code(temp, folder_indx, file_indx, list_files):
     global LIST_FOLDERS, FOLDER_TO_FILES
     next_item, prev_item = None, None
 
+    #!======================================
     #! there is one item in the unit
+    #!======================================
     if len(list_files) == 1:
-        #!=============
-        #! Next item
-        #!=============
-        next_folder = LIST_FOLDERS[folder_indx+1]
-        next_folder_name = os.path.basename(next_folder)
-        first_item_next_unit = list(
-            FOLDER_TO_FILES[next_folder].keys())[0]
-        first_item_next_unit = os.path.splitext(first_item_next_unit)[0]
-        next_item = f"../{next_folder_name}/{first_item_next_unit}.html"
 
-        #!=================
-        #! Previous item
-        #!=================
-        prev_folder = LIST_FOLDERS[folder_indx-1]
-        prev_folder_name = os.path.basename(prev_folder)
-        last_item_prev_unit = list(
-            FOLDER_TO_FILES[prev_folder].keys())[-1]
-        last_item_prev_unit = os.path.splitext(last_item_prev_unit)[0]
-        prev_item = f"../{prev_folder_name}/{last_item_prev_unit}.html"
+        #! there's only one unit
+        if len(LIST_FOLDERS) == 1:
+            prev_item = next_item = ""
 
-    # ?==================================================
-    # ?==================================================
+        else:
+            #! Next item
+            next_folder = LIST_FOLDERS[folder_indx+1]
+            next_folder_name = os.path.basename(next_folder)
+            first_item_next_unit = list(
+                FOLDER_TO_FILES[next_folder].keys())[0]
+            first_item_next_unit = os.path.splitext(first_item_next_unit)[0]
+            next_item = f"../{next_folder_name}/{first_item_next_unit}.html"
 
+            #! Previous item
+            prev_folder = LIST_FOLDERS[folder_indx-1]
+            prev_folder_name = os.path.basename(prev_folder)
+            last_item_prev_unit = list(
+                FOLDER_TO_FILES[prev_folder].keys())[-1]
+            last_item_prev_unit = os.path.splitext(last_item_prev_unit)[0]
+            prev_item = f"../{prev_folder_name}/{last_item_prev_unit}.html"
+
+    #!======================================
     #! this is the first item
+    #!======================================
     elif file_indx == 0:
         next_item = list_files[file_indx + 1]
 
@@ -101,10 +105,10 @@ def next_prev_items_code(temp, folder_indx, file_indx, list_files):
                       list_files[file_indx], sep='/')
                 print(LINE_SEP)
                 print()
-    # ?==================================================
-    # ?==================================================
 
+    #!======================================
     #! this is the last item
+    #!======================================
     elif file_indx == len(list_files) - 1:
         prev_item = list_files[file_indx - 1]
 
@@ -130,10 +134,10 @@ def next_prev_items_code(temp, folder_indx, file_indx, list_files):
                 print(LINE_SEP)
                 print()
                 sys.exit()
-    # ?==================================================
-    # ?==================================================
 
+    #!===============================================
     #! this is not the first or the last item
+    #!===============================================
     else:
         next_item = list_files[file_indx + 1]
         prev_item = list_files[file_indx - 1]
@@ -142,6 +146,10 @@ def next_prev_items_code(temp, folder_indx, file_indx, list_files):
         prev_item = os.path.splitext(prev_item)[0] + '.html'
     if next_item != "":
         next_item = os.path.splitext(next_item)[0] + '.html'
+
+    #!======================================
+    #! PREPROCESSSING...
+    #!======================================
 
     #!===================
     #! NEXT item
@@ -357,18 +365,35 @@ def create_videos_html_files():
                 html.write(temp)
 
 
-def extract_video_and_subs(files):
+def extract_video_and_subs(root, files):
     videos, subs, htmls = [], [], []
 
     for f in files:
-        ext = os.path.splitext(f)[-1]
+        name, ext = os.path.splitext(f)
         if ext == '.mp4':  # a video
             videos.append(f)
-        elif ext in ['.srt', '.vtt']:  # a sub
+        elif ext == '.vtt':  # vtt a sub
             subs.append(f)
-        #! some concepts in the lsseon are html files
-        #! also skip copies of the original files see method crop_html_content()
+
+        elif ext == '.srt':  # a srt sub
+            # ? VERY IMPORTANT https://github.com/sampotts/plyr/issues/355
+            # HTML5 specification does not support subtitle format other than webvtt,
+            # so you need a webvtt format subtitle for the src.
+            # so we create will convert the srt subtuile to vtt subtitle
+            # if the "vtt" subtitle file did not already exists
+
+            vtt_equivelant = name + '.vtt'
+
+            if vtt_equivelant in subs:  # the a vtt file already exists
+                continue
+            else:
+                srt_full_path = os.path.join(root, f)
+                craete_vtt_from(srt_full_path)
+                subs.append(vtt_equivelant)
+
         elif ext == '.html' and not f.endswith('_original.html') and f != 'index.html':
+            #! some concepts in the lsseon are html files
+            #! also skip copies of the original files see method crop_html_content()
             htmls.append(f)
 
     #! add html lesson to the videos to form the full unit lessons
@@ -381,6 +406,10 @@ def extract_video_and_subs(files):
     # sort the videos so the result dict keys are sorted also and we can
     # sue them at the current order to fill the HTML file
     videos.sort(key=lambda v: int(re.findall(r'\d+', v)[0]))
+
+    #! there's no html or videos in this folder
+    if videos == []:
+        return None
 
     result = {}
     for v in videos:
@@ -406,6 +435,17 @@ def copy_assets_folder():
     copy_tree(os.path.join(SCRIPT_PATH, 'assets'), dest_folder)
 
 
+def craete_vtt_from(srt_file):
+    try:
+        vtt = webvtt.from_srt(srt_file)
+        path_vtt_file = os.path.splitext(srt_file)[0] + '.vtt'
+        vtt.save(path_vtt_file)
+
+    #! The file does not have a valid format.
+    except:
+        return
+
+
 for root, folders, files in os.walk(COURSE_FOLDER):
     if root == COURSE_FOLDER:
         copy_assets_folder()
@@ -416,7 +456,18 @@ for root, folders, files in os.walk(COURSE_FOLDER):
     #! i.e. the folders downloaded from udemy not any other custom folders
     #! made by the user
     if os.path.basename(root)[0].isdigit():
-        FOLDER_TO_FILES[root] = extract_video_and_subs(files)
+        files = extract_video_and_subs(root, files)
+
+        #! there's no html or videos in this folder
+        if files == None:
+            print()
+            print(f'🤫 EMPTY FOLDER 🤫 => {root}')
+            print(LINE_SEP)
+            print()
+            continue
+
+        else:
+            FOLDER_TO_FILES[root] = files
 
 
 # pprint(FOLDER_TO_FILES)
