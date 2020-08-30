@@ -2,9 +2,7 @@
 IMPORTANT NOTES
 ====================
 
-1) Don't keep any files inside the course folder ONLY the course WALLPAPER
-    so put them inside another folder because the script will choose the first file
-    inside the course folder as the course wallpaper
+1) The script will choose the first image it faces as the wallpaper iamge inside the course folder
 
 2) The script will modify the original html files but before that the script
     will copy them into files with same name but end with "_original.html".
