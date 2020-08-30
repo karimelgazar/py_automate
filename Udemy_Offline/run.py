@@ -281,15 +281,16 @@ def check_if_script_tag_in(html_code):
 
 def crop_html_content(temp, original_html_file_path, copy_html_file_path):
     if os.path.exists(copy_html_file_path):
-        with open(copy_html_file_path, encoding="utf8") as org:  # ! the copy already exists
+        # ! the copy already exists
+        with open(copy_html_file_path, encoding="UTF-8", errors='ignore') as org:
             html_content = org.read()
             html_content = check_if_script_tag_in(html_content)
             return temp.replace(LESSON_CONTENT, html_content)
 
-    with open(original_html_file_path, encoding="utf8") as org:
+    with open(original_html_file_path, encoding="UTF-8", errors='ignore') as org:
         html_content = org.read()
         #! make a copy of the original html file
-        with open(copy_html_file_path, 'w', encoding="utf8") as copy:
+        with open(copy_html_file_path, 'w', encoding="UTF-8", errors='ignore') as copy:
             copy.write(html_content)
 
         html_content = check_if_script_tag_in(html_content)
@@ -303,7 +304,7 @@ def crop_html_content(temp, original_html_file_path, copy_html_file_path):
 def first_replace(folder_path, item_path, file_indx, is_html=False):
     temp = None
     item_name = os.path.splitext(item_path)[0]
-    with open(os.path.join(SCRIPT_PATH, 'video_template.html'), encoding="utf8") as file:
+    with open(os.path.join(SCRIPT_PATH, 'video_template.html'), encoding="UTF-8", errors='ignore') as file:
         temp = file.read()\
             .replace(FOLDER_NAME_PLACEHOLDER, os.path.basename(folder_path))\
             .replace(ITEM_NAME_PLACEHOLDER, item_name)\
@@ -339,12 +340,12 @@ def select_wallpaper_from(folder):
 
 
 def create_index_file(temp_path, folder, items_code, is_the_course_index=False):
-    with open(temp_path, encoding="utf8") as file:
+    with open(temp_path, encoding="UTF-8", errors='ignore') as file:
         html_temp = file.read()
         html_temp = html_temp.replace(
             FOLDER_NAME_PLACEHOLDER, os.path.basename(folder))
 
-        with open(os.path.join(folder, 'index.html'), 'w', encoding="utf8") as index:
+        with open(os.path.join(folder, 'index.html'), 'w', encoding="UTF-8", errors='ignore') as index:
             html_temp = html_temp.replace(
                 SIDEBAR_ITEMS_PLACEHOLDER, items_code)
 
@@ -396,7 +397,7 @@ def create_videos_html_files():
             name_html_file = os.path.splitext(file)[0] + '.html'
             video_html_file = os.path.join(folder_path, name_html_file)
             print(video_html_file)
-            with open(video_html_file, 'w', encoding="utf8") as html:
+            with open(video_html_file, 'w', encoding="UTF-8", errors='ignore') as html:
                 html.write(temp)
 
 
