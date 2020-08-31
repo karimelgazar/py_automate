@@ -15,6 +15,7 @@ IMPORTANT NOTES
 
 import argparse
 import os
+import webbrowser
 import re
 import sys
 from distutils.dir_util import copy_tree
@@ -79,12 +80,16 @@ def next_prev_items_code(temp, folder_indx, file_indx, list_files):
 
         else:
             #! Next item
-            next_folder = LIST_FOLDERS[folder_indx+1]
-            next_folder_name = os.path.basename(next_folder)
-            first_item_next_unit = list(
-                FOLDER_TO_FILES[next_folder].keys())[0]
-            first_item_next_unit = os.path.splitext(first_item_next_unit)[0]
-            next_item = f"../{next_folder_name}/{first_item_next_unit}.html"
+            if folder_indx == len(LIST_FOLDERS) - 1:
+                next_item = ""
+            else:
+                next_folder = LIST_FOLDERS[folder_indx+1]
+                next_folder_name = os.path.basename(next_folder)
+                first_item_next_unit = list(
+                    FOLDER_TO_FILES[next_folder].keys())[0]
+                first_item_next_unit = os.path.splitext(
+                    first_item_next_unit)[0]
+                next_item = f"../{next_folder_name}/{first_item_next_unit}.html"
 
             #! Previous item
             prev_folder = LIST_FOLDERS[folder_indx-1]
@@ -521,3 +526,7 @@ create_index_file(
     sidebar_items_code(LIST_FOLDERS, True),
     is_the_course_index=True)
 # ?==========================================================
+
+#! open the course "index.html" file when done
+
+webbrowser.open(os.path.join(COURSE_FOLDER, 'index.html'))
