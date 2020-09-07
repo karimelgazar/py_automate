@@ -1,5 +1,5 @@
+import argparse
 import webbrowser
-from tkinter import filedialog, Tk
 import os
 import sys
 
@@ -108,18 +108,29 @@ def pick_course(path):
             extract_html_in(folder)
 
 
-# Pick HTMLs Folder
-more_than_one = bool(
-    int(input('The folder contains more than one course[0/1]: ')))
+# ==============================================
+# ? THE SCRIPT STARTS EXCUTING FROM HERE
+# ==============================================
+#! get the course folder
+parser = argparse.ArgumentParser()
+help_1 = '[REQUIRED]: The Course Folder'
 
-Tk().withdraw()  # to hide the small tk window
-path = filedialog.askdirectory()  # folder picker
+parser.add_argument('course_folder',  help=help_1)
 
-if more_than_one:
-    for course in os.listdir(path):
-        full_path = os.path.join(path, course)
+COURSE_FOLDER = parser.parse_args().course_folder
+COURSE_FOLDER = os.path.abspath(COURSE_FOLDER)
+pick_course(COURSE_FOLDER)
 
-        if os.path.isdir(full_path):
-            pick_course(full_path)
-else:
-    pick_course(path)
+home_page = os.path.join(COURSE_FOLDER, 'index.html')
+
+if os.path.exists(home_page):
+    webbrowser.open(home_page)
+
+# if more_than_one:
+#     for course in os.listdir(path):
+#         full_path = os.path.join(path, course)
+
+#         if os.path.isdir(full_path):
+#             pick_course(full_path)
+# else:
+#     pick_course(path)
