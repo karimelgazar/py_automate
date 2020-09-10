@@ -38,7 +38,7 @@ def decorate(html_file, files, dirctory):
             pre_dirctory = folders[folder_indx - 1]
             folder_name = os.path.basename(pre_dirctory)
             file = html_files_in(pre_dirctory)[-1]
-            previous_button = "<a href=\"../{}/{}\" class=\"btn btn-warning\" role=\"button\" style=\"font-size : 50px; width: 100%; height: 75%px;background-color: #007bff;\">Previous Lesson 🤖</a>".format(
+            previous_button = "<a href=\"../{}/{}\" class=\"btn btn-warning\" role=\"button\" style=\"font-size : 50px; width: 100%; height: 75%px;background-color: #007bff;\">Previous Lesson 🏃</a>".format(
                 folder_name, file)
 
         if indx < len(files) - 1:  # normal next concept button
@@ -50,7 +50,7 @@ def decorate(html_file, files, dirctory):
             next_dirctory = folders[folder_indx + 1]
             folder_name = os.path.basename(next_dirctory)
             file = html_files_in(next_dirctory)[0]
-            next_button = "<a href=\"../{}/{}\" class=\"btn btn-success\" role=\"button\" style=\"font-size : 50px; width: 100%; height: 75%px;background-color: #007bff;\">Next Lesson 🐱‍🏍</a>".format(
+            next_button = "<a href=\"../{}/{}\" class=\"btn btn-success\" role=\"button\" style=\"font-size : 50px; width: 100%; height: 75%px;background-color: #007bff;\">Next Lesson 👨‍💻 | 🤩</a>".format(
                 folder_name, file)
 
         if indx > 0:
@@ -102,8 +102,8 @@ def pick_course(path):
         return
 
     else:  # ? the whole course was given
-        folders = [os.path.join(path, item) for item in os.listdir(
-            path) if item.startswith('Part')]
+        folders = sorted([os.path.join(path, item) for item in os.listdir(
+            path) if item.startswith('Part')])
         for folder in folders:
             extract_html_in(folder)
 
